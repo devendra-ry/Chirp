@@ -3,6 +3,8 @@ import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/views/search.dart';
+import 'package:blogging_app/views/search_blog.dart';
+import 'package:blogging_app/views/search_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'about.dart';
@@ -224,6 +226,44 @@ class _HomePageState extends State<HomePage> {
                 title: Text(
                   'Sign Out',
                   style: TextStyle(color: Colors.red[300], fontSize: 16.0),
+                ),
+              ),
+              Divider(),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchUser(),
+                    ),
+                  );
+                },
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                leading: Icon(Icons.info, color: Colors.black),
+                title: Text(
+                  'Search User',
+                  style:
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                ),
+              ),
+              Divider(),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchBlog(),
+                    ),
+                  );
+                },
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                leading: Icon(Icons.info, color: Colors.black),
+                title: Text(
+                  'Search Blog',
+                  style:
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
                 ),
               ),
             ],
