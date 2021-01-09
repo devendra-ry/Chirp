@@ -18,7 +18,8 @@ class AuthService {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user);
+      if (user.isEmailVerified) return _userFromFirebaseUser(user);
+      return null;
     } catch (e) {
       print(e.toString());
       return null;
@@ -31,8 +32,9 @@ class AuthService {
       // register with email and password
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
 
+      FirebaseUser user = result.user;
+      await user.sendEmailVerification();
       // Create a new document for the user with uid in users collection
       await DatabaseService(uid: user.uid)
           .createUserData(fullName, email, password);

@@ -200,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: (val) =>
                                 val == _passwordEditingController.text
                                     ? null
-                                    : 'Does not macth the password',
+                                    : 'Does not match the password',
                             obscureText: true,
                           ),
                           SizedBox(height: height * 0.05),

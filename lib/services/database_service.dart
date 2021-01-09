@@ -19,7 +19,10 @@ class DatabaseService {
       'fullNameArray': fullName.toLowerCase().split(" "),
       'email': email,
       'password': password,
-      'likedPosts': []
+      'likedPosts': [],
+      'posts': [],
+      'follow': [],
+      'followers': [],
     });
   }
 
@@ -34,6 +37,9 @@ class DatabaseService {
   // save blog post
   Future saveBlogPost(
       String title, String author, String authorEmail, String content) async {
+
+    DocumentReference userRef = userCollection.document(uid);
+
     DocumentReference blogPostsRef =
         await Firestore.instance.collection('blogPosts').add({
       'userId': uid,
@@ -49,6 +55,10 @@ class DatabaseService {
     });
 
     await blogPostsRef.updateData({'blogPostId': blogPostsRef.documentID});
+
+    await userRef.updateData({
+      'posts': FieldValue.arrayUnion([title])
+    });
 
     return blogPostsRef.documentID;
   }

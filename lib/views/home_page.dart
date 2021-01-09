@@ -2,9 +2,8 @@ import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
+import 'package:blogging_app/views/profile.dart';
 import 'package:blogging_app/views/search.dart';
-import 'package:blogging_app/views/search_blog.dart';
-import 'package:blogging_app/views/search_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'about.dart';
@@ -151,13 +150,6 @@ class _HomePageState extends State<HomePage> {
                   _userEmail,
                   style: TextStyle(fontFamily: 'OpenSans'),
                 ),
-                currentAccountPicture: new CircleAvatar(
-                  backgroundColor: Colors.green,
-                  child: Text(
-                    _userName[0],
-                    style: TextStyle(fontFamily: 'OpenSans', fontSize: 30),
-                  ),
-                ),
               ),
               ListTile(
                 contentPadding:
@@ -167,6 +159,25 @@ class _HomePageState extends State<HomePage> {
                   'Home',
                   style:
                       TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                ),
+              ),
+              Divider(),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Profile(uid: _user.uid,userEmail: _userEmail,),
+                    ),
+                  );
+                },
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                leading: Icon(Icons.person, color: Colors.black),
+                title: Text(
+                  'Profile',
+                  style:
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
                 ),
               ),
               Divider(),
@@ -226,44 +237,6 @@ class _HomePageState extends State<HomePage> {
                 title: Text(
                   'Sign Out',
                   style: TextStyle(color: Colors.red[300], fontSize: 16.0),
-                ),
-              ),
-              Divider(),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchUser(),
-                    ),
-                  );
-                },
-                contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                leading: Icon(Icons.info, color: Colors.black),
-                title: Text(
-                  'Search User',
-                  style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
-                ),
-              ),
-              Divider(),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchBlog(),
-                    ),
-                  );
-                },
-                contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                leading: Icon(Icons.info, color: Colors.black),
-                title: Text(
-                  'Search Blog',
-                  style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
                 ),
               ),
             ],
