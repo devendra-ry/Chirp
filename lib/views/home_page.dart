@@ -2,7 +2,7 @@ import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
-import 'package:blogging_app/views/profile.dart';
+import 'package:blogging_app/views/profile_page.dart';
 import 'package:blogging_app/views/search.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Profile(uid: _user.uid,userEmail: _userEmail,),
+                      builder: (context) => ProfilePage(uid: _user.uid,userEmail: _userEmail,),
                     ),
                   );
                 },

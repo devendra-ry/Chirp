@@ -23,6 +23,7 @@ class DatabaseService {
       'posts': [],
       'follow': [],
       'followers': [],
+      'location': '',
     });
   }
 
@@ -32,6 +33,15 @@ class DatabaseService {
         await userCollection.where('email', isEqualTo: email).getDocuments();
     print(snapshot.documents[0].data);
     return snapshot;
+  }
+
+  Future updateUserData(String name,String location) async{
+    DocumentReference userRef = userCollection.document(uid);
+    await userRef.updateData({
+      'fullname': name,
+      'location': location,
+    });
+    return userRef.documentID;
   }
 
   // save blog post
