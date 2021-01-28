@@ -24,6 +24,7 @@ class DatabaseService {
       'follow': [],
       'followers': [],
       'location': '',
+      'profileImage' : 'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4',
     });
   }
 
@@ -35,11 +36,19 @@ class DatabaseService {
     return snapshot;
   }
 
-  Future updateUserData(String name,String location) async{
+  Future getUserDataID(String id) async {
+    QuerySnapshot snapshot =
+    await userCollection.where('userId', isEqualTo: id).getDocuments();
+    print(snapshot.documents[0].data);
+    return snapshot;
+  }
+
+  Future updateUserData(String name,String location, String URL) async{
     DocumentReference userRef = userCollection.document(uid);
     await userRef.updateData({
       'fullname': name,
       'location': location,
+      'profileImage' : URL,
     });
     return userRef.documentID;
   }
@@ -150,4 +159,13 @@ class DatabaseService {
       });
     }
   }
+
+  //Storage URL
+  /*
+  printUrl() async {
+    StorageReference ref = FirebaseStorage.instance.ref().child("profiles/blank-profile-picture-973460_960_720.png");
+    String url = (await ref.getDownloadURL()).toString();
+    print('$url');
+  }
+  */
 }

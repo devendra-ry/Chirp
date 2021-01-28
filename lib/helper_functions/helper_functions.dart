@@ -23,7 +23,7 @@ class Helper{
     return await preferences.setString(sharedPreferenceUserEmailKey, userEmail);
   }
 
-  //retreiving data locally
+  //retrieving data locally
   static Future<bool> getUserLoggedInSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getBool(sharedPreferenceUserLoggedInKey);

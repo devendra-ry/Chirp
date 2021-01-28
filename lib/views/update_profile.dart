@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'package:path/path.dart' as Path;
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/shared/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 class EditProfilePage extends StatefulWidget {
   final String uid;
@@ -18,6 +23,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String _error = '';
   TextEditingController _fullNameEditingController = new TextEditingController();
   TextEditingController _location = new TextEditingController();
+  File _image;
+  final picker = ImagePicker();
+  String newURL = '';
+  String profileImage;
 
   @override
   void initState() {
@@ -26,8 +35,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   _updateDetails() async{
-    if (_fullNameEditingController.text != '' && _location.text != ''){
-      await DatabaseService(uid: widget.uid).updateUserData(_fullNameEditingController.text,_location.text).then((res) {
+    if (_fullNameEditingController.text != '' || _location.text != '' || newURL != ''){
+      await DatabaseService(uid: widget.uid).updateUserData(_fullNameEditingController.text,_location.text, newURL).then((res) {
         setState(() {
           if (res!= null) {
             _isLoading = true;
@@ -48,9 +57,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
     await DatabaseService(uid: widget.uid).getUserData(widget.userEmail).then((res) {
       setState(() {
         userSnap = res;
+        //newURL = userSnap.documents[0].data['profileImage'].toString();
+        _fullNameEditingController.text = userSnap.documents[0].data['fullName'].toString();
+        _location.text = userSnap.documents[0].data['location'].toString();
+        profileImage = userSnap.documents[0].data['profileImage'].toString();
         _isLoading = false;
       });
     } );
+  }
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery,imageQuality: 50);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        print('----------------Image Selected-------------------');
+      } else {
+        print('----------------------No image selected.--------------------------------');
+      }
+    });
+  }
+
+  Future uploadPic() async{
+    print('------------------upload function called===============');
+    StorageReference storageReference = FirebaseStorage.instance.ref().child('profiles/${Path.basename(_image.toString())}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('---------------File Uploaded-------------------------------');
+
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        newURL = fileURL.toString();
+        print(newURL);
+      });
+    });
   }
 
   @override
@@ -104,9 +144,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(
-                                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Sundar_Pichai_WEF_2020.png/330px-Sundar_Pichai_WEF_2020.png',
-                              ))),
+                              image: NetworkImage(profileImage,)
+                          ),
+                      ),
                     ),
                     Positioned(
                         bottom: 0,
@@ -123,7 +163,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             color: Colors.green,
                           ),
                           child: GestureDetector(
-                            onTap: (){},
+                            onTap: (){
+                              getImage().then((value) => uploadPic());
+                              print('edit button-------------------------------------');
+                            },
                             child: Icon(
                               Icons.edit,
                               color: Colors.white,
@@ -197,6 +240,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   FlatButton(
                     onPressed: () {
+                      //uploadPic();
                       _updateDetails();
                     },
                     color: Colors.green,

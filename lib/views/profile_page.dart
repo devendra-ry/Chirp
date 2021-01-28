@@ -1,3 +1,4 @@
+import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/shared/loading.dart';
 import 'package:blogging_app/views/update_profile.dart';
@@ -18,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   QuerySnapshot userSnap;
   bool _isLoading = true;
 
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
         userSnap = res;
         _isLoading = false;
       });
-    } );
+    });
   }
 
   @override
@@ -75,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.only(left: 28.0,top:7),
                   child: CircleAvatar(
                     radius: 40,
-                    backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Sundar_Pichai_WEF_2020.png/330px-Sundar_Pichai_WEF_2020.png'),
+                    backgroundImage: NetworkImage(userSnap.documents[0].data['profileImage'].toString()),
                   ),
                 ),
                 Padding(

@@ -4,6 +4,7 @@ import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/views/profile_page.dart';
 import 'package:blogging_app/views/search.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'about.dart';
@@ -21,9 +22,13 @@ class _HomePageState extends State<HomePage> {
 
   //variables
   FirebaseUser _user;
+  QuerySnapshot userSnap;
   String _userName = '';
   String _userEmail = '';
   Stream _blogPosts;
+  String profilePic = '';
+  String defaultPic =
+      'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
 
   // initState
   @override
@@ -53,6 +58,13 @@ class _HomePageState extends State<HomePage> {
         _blogPosts = snapshots;
       });
     });
+    //get user data
+    await DatabaseService(uid: _user.uid).getUserDataID(_user.uid).then((res) {
+      setState(() {
+        userSnap = res;
+        profilePic = userSnap.documents[0].data['profileImage'].toString();
+      });
+    });
   }
 
   Widget noBlogPostWidget() {
@@ -72,9 +84,9 @@ class _HomePageState extends State<HomePage> {
                       userName: _userName,
                       userEmail: _userEmail),
                 ),
-              ).then((value) => setState((){
-                _getBlogPosts();
-              }));
+              ).then((value) => setState(() {
+                    _getBlogPosts();
+                  }));
             },
             child: Icon(Icons.add_circle, color: Colors.grey[700], size: 100.0),
           ),
@@ -150,6 +162,10 @@ class _HomePageState extends State<HomePage> {
                   _userEmail,
                   style: TextStyle(fontFamily: 'OpenSans'),
                 ),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      (profilePic == '') ? defaultPic : profilePic),
+                ),
               ),
               ListTile(
                 contentPadding:
@@ -167,17 +183,20 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfilePage(uid: _user.uid,userEmail: _userEmail,),
+                      builder: (context) => ProfilePage(
+                        uid: _user.uid,
+                        userEmail: _userEmail,
+                      ),
                     ),
                   );
                 },
                 contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                 leading: Icon(Icons.person, color: Colors.black),
                 title: Text(
                   'Profile',
                   style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                      TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
                 ),
               ),
               Divider(),
@@ -252,9 +271,9 @@ class _HomePageState extends State<HomePage> {
               builder: (context) => CreateBlogPage(
                   uid: _user.uid, userName: _userName, userEmail: _userEmail),
             ),
-          ).then((value) => setState((){
-            _getBlogPosts();
-          }));
+          ).then((value) => setState(() {
+                _getBlogPosts();
+              }));
         },
         child: Icon(Icons.create, color: Colors.white, size: 30.0),
         backgroundColor: Colors.blue,
@@ -270,7 +289,6 @@ class _HomePageState extends State<HomePage> {
 //             _getBlogPosts();
 //             print("==============================");
 //           }),
-
 
 /*
 GestureDetector(
@@ -292,7 +310,6 @@ print("=================================================");
 },
 ),
 */
-
 
 /*
 GestureDetector(
