@@ -1,3 +1,4 @@
+import 'package:blogging_app/views/ArticlePage.dart';
 import 'package:blogging_app/views/post_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,11 +46,50 @@ class _PostTileState extends State<PostTile> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => BlogPostPage(userId: _user.uid, blogPostId: widget.blogPostId)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticlePage(userId: _user.uid, blogPostId: widget.blogPostId)));
       },
-      child: Container(
+      child: Column(
+        children: [
+          header(),
+          Container(
+            constraints: BoxConstraints.expand(height: height * 0.3),
+            child: Image.network("https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  header (){
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+        child: ListTile(
+          leading: CircleAvatar(
+            radius: 30.0,
+            backgroundColor: randomizer.getspecifiedcolor(colorsList),
+            child: Text(widget.blogPostTitle.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+          ),
+          title: Text(
+            widget.blogPostTitle,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+          trailing: Text(widget.date, style: TextStyle(color: Colors.grey, fontSize: 12.0)),
+        ),
+      );
+
+  }
+
+}
+
+
+/*
+header (){
+    return Container(
         padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
         child: ListTile(
           leading: CircleAvatar(
@@ -71,7 +111,7 @@ class _PostTileState extends State<PostTile> {
           ),
           trailing: Text(widget.date, style: TextStyle(color: Colors.grey, fontSize: 12.0)),
         ),
-      ),
-    );
+      );
+
   }
-}
+ */

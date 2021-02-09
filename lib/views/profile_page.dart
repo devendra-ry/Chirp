@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 class ProfilePage extends StatefulWidget {
   final String uid;
   final String userEmail;
-
-  ProfilePage({Key key, this.uid, this.userEmail});
+  final String visitedUserId;
+  ProfilePage({Key key, this.uid, this.userEmail, this.visitedUserId});
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -19,6 +19,10 @@ class _ProfilePageState extends State<ProfilePage> {
   QuerySnapshot userSnap;
   bool _isLoading = true;
 
+
+  int _followersCount = 0;
+  int _followingCount = 0;
+  bool _isFollowing = false;
 
   @override
   void initState() {
@@ -34,6 +38,8 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
