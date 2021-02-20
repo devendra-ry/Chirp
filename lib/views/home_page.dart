@@ -1,3 +1,5 @@
+//import 'dart:html';
+
 import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
@@ -123,7 +125,8 @@ class _HomePageState extends State<HomePage> {
                               .data.documents[index].data['blogPostTitle'],
                           blogPostContent: snapshot
                               .data.documents[index].data['blogPostContent'],
-                          date: snapshot.data.documents[index].data['date']),
+                          date: snapshot.data.documents[index].data['date'],
+                          postImage: (snapshot.data.documents[index].data['postImage'] != null)? snapshot.data.documents[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 20.0),
                           child: Divider(height: 0.0)),

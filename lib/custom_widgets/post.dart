@@ -12,13 +12,15 @@ class PostTile extends StatefulWidget {
   final String blogPostTitle;
   final String blogPostContent;
   final String date;
+  final String postImage;
 
   PostTile({
     this.userId,
     this.blogPostId,
     this.blogPostTitle,
     this.blogPostContent,
-    this.date
+    this.date,
+    this.postImage,
   });
 
   @override
@@ -49,14 +51,14 @@ class _PostTileState extends State<PostTile> {
     final height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticlePage(userId: _user.uid, blogPostId: widget.blogPostId)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticlePage(userId: _user.uid, blogPostId: widget.blogPostId,postImage: widget.postImage)));
       },
       child: Column(
         children: [
           header(),
           Container(
             constraints: BoxConstraints.expand(height: height * 0.3),
-            child: Image.network("https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png"),
+            child: Image.network(widget.postImage),
           ),
         ],
       ),

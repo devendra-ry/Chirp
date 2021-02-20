@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 class ArticlePage extends StatefulWidget {
   final String userId;
   final String blogPostId;
+  final String postImage;
 
-  ArticlePage({Key key, this.userId, this.blogPostId});
+  ArticlePage({Key key, this.userId, this.blogPostId, this.postImage});
 
   @override
   _ArticlePageState createState() => _ArticlePageState();
@@ -71,7 +72,7 @@ class _ArticlePageState extends State<ArticlePage> {
             children: <Widget>[
               Container(
                   constraints: BoxConstraints.expand(height: height * 0.3),
-                  child: Image.network("https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png")),
+                  child: Image.network(widget.postImage)),
               Container(
                 margin: EdgeInsets.fromLTRB(16.0, 200.0,16.0,16.0),
                 decoration: BoxDecoration(

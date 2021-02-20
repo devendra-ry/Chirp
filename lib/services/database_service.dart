@@ -43,19 +43,19 @@ class DatabaseService {
     return snapshot;
   }
 
-  Future updateUserData(String name,String location, String URL) async{
+  Future updateUserData(String name,String location, String url) async{
     DocumentReference userRef = userCollection.document(uid);
     await userRef.updateData({
       'fullname': name,
       'location': location,
-      'profileImage' : URL,
+      'profileImage' : url,
     });
     return userRef.documentID;
   }
 
   // save blog post
   Future saveBlogPost(
-      String title, String author, String authorEmail, String content) async {
+      String title, String author, String authorEmail, String content, String url) async {
 
     DocumentReference userRef = userCollection.document(uid);
 
@@ -68,6 +68,7 @@ class DatabaseService {
       'blogPostAuthor': author,
       'blogPostAuthorEmail': authorEmail,
       'blogPostContent': content,
+      'postImage' : url,
       'likedBy': [],
       'createdAt': new DateTime.now(),
       'date': DateFormat.yMMMd('en_US').format(new DateTime.now())
