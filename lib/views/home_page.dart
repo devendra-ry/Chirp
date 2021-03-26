@@ -4,8 +4,10 @@ import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
+import 'package:blogging_app/views/manageblogs.dart';
 import 'package:blogging_app/views/profile_page.dart';
 import 'package:blogging_app/views/search.dart';
+import 'package:blogging_app/views/topblogs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   //get the info about logged in user
   final AuthService _authService = new AuthService();
 
@@ -172,7 +175,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                 leading: Icon(Icons.home, color: Colors.black),
                 title: Text(
                   'Home',
@@ -194,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                 leading: Icon(Icons.person, color: Colors.black),
                 title: Text(
                   'Profile',
@@ -213,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                 leading: Icon(Icons.search, color: Colors.black),
                 title: Text(
                   'Search',
@@ -227,12 +230,50 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
+                      builder: (context) => ManageBlogs(),
+                    ),
+                  );
+                },
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+                leading: Icon(Icons.edit, color: Colors.black),
+                title: Text(
+                  'Manage Blogs',
+                  style:
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                ),
+              ),
+              Divider(),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TopBlogs(),
+                    ),
+                  );
+                },
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+                leading: Icon(Icons.arrow_drop_up, color: Colors.black),
+                title: Text(
+                  'Top Blogs',
+                  style:
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                ),
+              ),
+              Divider(),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
                       builder: (context) => AboutPage(),
                     ),
                   );
                 },
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                 leading: Icon(Icons.info, color: Colors.black),
                 title: Text(
                   'About',
@@ -251,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                       (Route<dynamic> route) => false);
                 },
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                 leading: Icon(
                   Icons.exit_to_app,
                   color: Colors.red,

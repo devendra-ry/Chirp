@@ -35,6 +35,7 @@ dependencies:
   randomizer: ^0.0.2
   image_picker: ^0.6.7+21
   firebase_storage: ^3.0.3
+  share: ^0.6.2+3
 
 
 dev_dependencies:

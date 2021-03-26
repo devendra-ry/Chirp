@@ -1,14 +1,20 @@
-import 'package:blogging_app/views/Favourites.dart';
-import 'package:blogging_app/views/search_blog.dart';
-import 'package:blogging_app/views/search_user.dart';
+import 'package:blogging_app/custom_widgets/post.dart';
+import 'package:blogging_app/helper_functions/helper_functions.dart';
+import 'package:blogging_app/services/authentication_service.dart';
+import 'package:blogging_app/services/database_service.dart';
+import 'package:blogging_app/views/delete_blogs.dart';
+import 'package:blogging_app/views/edit_blogs.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SearchPage extends StatefulWidget {
+class ManageBlogs extends StatefulWidget {
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _ManageBlogsState createState() => _ManageBlogsState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _ManageBlogsState extends State<ManageBlogs> {
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -22,8 +28,8 @@ class _SearchPageState extends State<SearchPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Search",style: TextStyle(
-                    fontSize: 40,
+                  Text("Manage your blogs",style: TextStyle(
+                    fontSize: 34,
                   ),),
                 ],
               ),
@@ -36,12 +42,12 @@ class _SearchPageState extends State<SearchPage> {
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
-                    child: Text('Search Users',
+                    child: Text('Edit blogs',
                         style: TextStyle(
                             color: Colors.blue, fontSize: 16.0)),
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => SearchUser()));
+                          MaterialPageRoute(builder: (context) => EditBlogs()));
                     }),
               ),
               SizedBox(height: 10.0,),
@@ -53,29 +59,12 @@ class _SearchPageState extends State<SearchPage> {
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
-                    child: Text('Search Blogs',
+                    child: Text('Delete blogs',
                         style: TextStyle(
                             color: Colors.blue, fontSize: 16.0)),
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => SearchBlog()));
-                    }),
-              ),
-              SizedBox(height: 10.0,),
-              SizedBox(
-                width: double.infinity,
-                height: height * 0.12,
-                child: RaisedButton(
-                    elevation: 0.0,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Text('Favourites',
-                        style: TextStyle(
-                            color: Colors.blue, fontSize: 16.0)),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Favourites()));
+                          MaterialPageRoute(builder: (context) => DeleteBlogs()));
                     }),
               ),
             ],

@@ -11,6 +11,14 @@ class DatabaseService {
   final CollectionReference userCollection =
       Firestore.instance.collection('users');
 
+  //get the reference of collection blogs in the database
+  final CollectionReference blogCollection =
+  Firestore.instance.collection('blogPosts');
+
+  //get the reference of collection comments in the database
+  final CollectionReference commentCollection =
+  Firestore.instance.collection('comments');
+
   // create user data
   Future createUserData(String fullName, String email, String password) async {
     return await userCollection.document(uid).setData({
@@ -20,6 +28,7 @@ class DatabaseService {
       'email': email,
       'password': password,
       'likedPosts': [],
+      'dislikedPosts' : [],
       'posts': [],
       'follow': [],
       'followers': [],
@@ -70,7 +79,9 @@ class DatabaseService {
       'blogPostContent': content,
       'postImage' : url,
       'likedBy': [],
+      'dislikedBy' : [],
       'createdAt': new DateTime.now(),
+      'favourite': false,
       'date': DateFormat.yMMMd('en_US').format(new DateTime.now())
     });
 
@@ -81,6 +92,38 @@ class DatabaseService {
     });
 
     return blogPostsRef.documentID;
+  }
+
+  //update blog post
+  Future updateBlogPost(String id, String title, String content, String url) async{
+    DocumentReference blogRef = blogCollection.document(id);
+    await blogRef.updateData({
+      'blogPostTitle': title,
+      'blogPostTitleArray': title.toLowerCase().split(" "),
+      'blogPostContent': content,
+      'postImage' : url,
+    });
+
+    return blogRef.documentID;
+
+    /*
+    DocumentReference userRef = userCollection.document(uid);
+    DocumentReference blogPostsRef = Firestore.instance.collection('blogPosts').document(id);
+    await blogPostsRef.updateData({
+      'blogPostTitle': title,
+      'blogPostTitleArray': title.toLowerCase().split(" "),
+      'blogPostContent': content,
+      'postImage' : url,
+    });
+
+    return blogPostsRef.documentID;
+    */
+  }
+
+  //delete blog post
+  Future deleteBlogPost(String id) async {
+    DocumentReference blogRef = blogCollection.document(id);
+    await blogRef.delete();
   }
 
   // get user blog posts
@@ -161,6 +204,33 @@ class DatabaseService {
     }
   }
 
+  // liked blog posts
+  Future togglingDisLikes(String blogPostId) async {
+    DocumentReference userRef = userCollection.document(uid);
+    DocumentSnapshot userSnap = await userRef.get();
+
+    DocumentReference blogPostRef =
+    Firestore.instance.collection('blogPosts').document(blogPostId);
+
+    List<dynamic> dislikedPosts = await userSnap.data['dislikedPosts'];
+
+    if (dislikedPosts.contains(blogPostId)) {
+      userRef.updateData({
+        'dislikedPosts': FieldValue.arrayRemove([blogPostId])
+      });
+      blogPostRef.updateData({
+        'dislikedBy': FieldValue.arrayRemove([uid])
+      });
+    } else {
+      userRef.updateData({
+        'dislikedPosts': FieldValue.arrayUnion([blogPostId])
+      });
+      blogPostRef.updateData({
+        'dislikedBy': FieldValue.arrayUnion([uid])
+      });
+    }
+  }
+
   //Storage URL
   /*
   printUrl() async {
@@ -169,4 +239,63 @@ class DatabaseService {
     print('$url');
   }
   */
+
+  // get user blogposts
+  getTopBlogPosts() async {
+    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
+    return Firestore.instance
+        .collection('blogPosts')
+        .orderBy('likedBy', descending: true)
+        .snapshots();
+  }
+
+  //get liked blogposts
+  getLikedBlogPosts() async {
+    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
+    return Firestore.instance
+        .collection('blogPosts')
+        .where('favourite', isEqualTo: true).orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  //add to favourite
+  Future addFavourite(String id) async {
+    DocumentReference blogRef = blogCollection.document(id);
+    await blogRef.updateData({
+      'favourite': true,
+    });
+    return blogRef.documentID;
+  }
+
+  //remove from favourite
+  Future removeFavourite(String id) async {
+    DocumentReference blogRef = blogCollection.document(id);
+    await blogRef.updateData({
+      'favourite': false,
+    });
+    return blogRef.documentID;
+  }
+
+  //save comments
+  Future saveComment(String uid,String name, String blogID, String comment) async{
+    DocumentReference comRef = await Firestore.instance.collection('comments').add({
+      'userId': uid,
+      'userName': name,
+      'comID': blogID,
+      'comment': comment,
+      'createdAt': new DateTime.now(),
+      'date': DateFormat.yMMMd('en_US').format(new DateTime.now()),
+    });
+
+    return comRef.documentID;
+  }
+
+  //get comments
+  Future getComments(String id) async {
+    return Firestore.instance
+        .collection('comments')
+        .where('comID', isEqualTo: id)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
 }

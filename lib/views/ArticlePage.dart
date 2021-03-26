@@ -1,7 +1,10 @@
 import 'package:blogging_app/models/blogpost.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/shared/loading.dart';
+import 'package:blogging_app/views/comments.dart';
+import 'package:blogging_app/views/create_comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:share/share.dart';
 import 'package:flutter/material.dart';
 
 class ArticlePage extends StatefulWidget {
@@ -19,8 +22,12 @@ class _ArticlePageState extends State<ArticlePage> {
   BlogPost blogPostDetails = new BlogPost();
   bool _isLoading = true;
   bool _isLiked;
+  bool _isdisLiked;
+  bool _isFavourite;
   DocumentReference blogPostRef;
   DocumentSnapshot blogPostSnap;
+  String userName;
+  QuerySnapshot userSnap;
 
   @override
   void initState() {
@@ -53,8 +60,39 @@ class _ArticlePageState extends State<ArticlePage> {
       });
     }
 
+    List<dynamic> dislikedBy = blogPostSnap.data['dislikedBy'];
+    if (dislikedBy.contains(widget.userId)) {
+      setState(() {
+        _isdisLiked = true;
+      });
+    } else {
+      setState(() {
+        _isdisLiked = false;
+      });
+    }
+
+    _isFavourite = blogPostSnap.data['favourite'];
+    if(_isFavourite){
+      setState(() {
+        _isFavourite = true;
+      });
+    }else{
+      setState(() {
+        _isFavourite = false;
+      });
+    }
+
     print(blogPostSnap.data);
+    print('----------------------${blogPostSnap.data['favourite']}');
+
+    await DatabaseService(uid: widget.userId).getUserDataID(widget.userId).then((res) {
+      setState(() {
+        userSnap = res;
+        userName = userSnap.documents[0].data['fullName'].toString();
+      });
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +101,9 @@ class _ArticlePageState extends State<ArticlePage> {
       appBar: AppBar(
         title: Text(blogPostDetails.blogPostTitle),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.share), onPressed: (){},)
+          IconButton(icon: Icon(Icons.share), onPressed: (){
+            share(context);
+          },)
         ],
       ),
       body: SingleChildScrollView(
@@ -111,15 +151,51 @@ class _ArticlePageState extends State<ArticlePage> {
                             children: <Widget>[
                               _isLiked != null
                                   ? (_isLiked
-                                  ? Icon(Icons.favorite,color: Colors.pinkAccent,
+                                  ? Icon(Icons.thumb_up,color: Colors.pinkAccent,
                                   size: 17.0)
-                                  : Icon(Icons.favorite_border, size: 17.0))
+                                  : Icon(Icons.thumb_up, size: 17.0))
                                   : Text(''),
                               // Icon(Icons.thumb_up, size: 17.0),
-                              SizedBox(width: 7.0),
+                              SizedBox(width: 20.0),
                               blogPostSnap != null
                                   ? Text(
-                                  '${blogPostSnap.data['likedBy'].length} Like(s)',
+                                  '${blogPostSnap.data['likedBy'].length}',
+                                  style: TextStyle(fontSize: 13.0))
+                                  : Text(''),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          await DatabaseService(uid: widget.userId)
+                              .togglingDisLikes(widget.blogPostId);
+                          blogPostSnap = await blogPostRef.get();
+                          setState(() {
+                            _isdisLiked = !_isdisLiked;
+                          });
+                        },
+                        child: Container(
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 7.0),
+                          decoration: BoxDecoration(
+
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              _isdisLiked != null
+                                  ? (_isdisLiked
+                                  ? Icon(Icons.thumb_down,color: Colors.pinkAccent,
+                                  size: 17.0)
+                                  : Icon(Icons.thumb_down, size: 17.0))
+                                  : Text('wrong'),
+                              // Icon(Icons.thumb_up, size: 17.0),
+                              SizedBox(width: 6.0),
+                              blogPostSnap != null
+                                  ? Text(
+                                  '${blogPostSnap.data['dislikedBy'].length}',
                                   style: TextStyle(fontSize: 13.0))
                                   : Text(''),
                             ],
@@ -127,12 +203,75 @@ class _ArticlePageState extends State<ArticlePage> {
                         ),
                       ),
                       SizedBox(width: 16.0,),
-                      Icon(Icons.comment),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => Comments(userId:widget.userId,blogPostId: widget.blogPostId,)),
+                          );
+                        },
+                        child: Icon(Icons.comment),
+                      ),
+
                       SizedBox(width: 5.0,),
-                      Text("2.2k"),
+                      GestureDetector(
+                        onTap: () async {
+                          setState(() {
+                            _isFavourite = !_isFavourite;
+                          });
+                          if (_isFavourite){
+                            await DatabaseService(uid: widget.userId).addFavourite(blogPostSnap.data['blogPostId']);
+                          }else{
+                            await DatabaseService(uid: widget.userId).removeFavourite(blogPostSnap.data['blogPostId']);
+                          }
+                        },
+                        child: Container(
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 7.0),
+                          decoration: BoxDecoration(
+
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              _isFavourite != null
+                                  ? (_isFavourite
+                                  ? Icon(Icons.favorite,color: Colors.pinkAccent,
+                                  size: 17.0)
+                                  : Icon(Icons.favorite, size: 17.0))
+                                  : Text(''),
+                              // Icon(Icons.thumb_up, size: 17.0),
+                              SizedBox(width: 20.0),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],),
                     SizedBox(height: 10.0,),
                     Text(blogPostDetails.blogPostContent, textAlign: TextAlign.justify,),
+                    SizedBox(height: 5.0,),
+                    RaisedButton(
+                        elevation: 5.0,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        child: Text(
+                          'Comment',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => CreateComment(userId: widget.userId,userName: userName,blogPostId: widget.blogPostId,)),
+                          );
+                        }),
                   ],
                 ),
               ),
@@ -141,5 +280,12 @@ class _ArticlePageState extends State<ArticlePage> {
         ),
       ),
     );
+  }
+  share(BuildContext context) {
+    final RenderBox box = context.findRenderObject();
+
+    Share.share("${blogPostDetails.blogPostTitle} - ${blogPostDetails.blogPostContent}",
+        subject: blogPostDetails.blogPostContent,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 }
