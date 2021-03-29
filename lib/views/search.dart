@@ -18,14 +18,17 @@ class _SearchPageState extends State<SearchPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Search",style: TextStyle(
-                    fontSize: 40,
-                  ),),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Search",style: TextStyle(
+                      fontSize: 40,
+                    ),),
+                  ],
+                ),
               ),
               SizedBox(height: 10.0,),
               SizedBox(

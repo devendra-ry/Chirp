@@ -34,7 +34,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
   File _image;
   final picker = ImagePicker();
-  String newURL = '';
+  String newURL = 'https://t4.ftcdn.net/jpg/00/89/55/15/240_F_89551596_LdHAZRwz3i4EM4J0NHNHy2hEUYDfXc0j.jpg';
   String profileImage;
 
   //save data to firestore

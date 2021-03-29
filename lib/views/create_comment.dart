@@ -72,6 +72,7 @@ class _CreateCommentState extends State<CreateComment> {
                         ),
                         onPressed: () async{
                               await DatabaseService(uid: widget.userId).saveComment(widget.userId,widget.userName, widget.blogPostId, _commentEditingController.text).then((value) => Navigator.of(context).pop());
+                              print(widget.blogPostId);
                         }),
                   ),
                   SizedBox(height: height * 0.04),

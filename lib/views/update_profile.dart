@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as Path;
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/shared/loading.dart';
@@ -97,12 +98,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return _isLoading?Loading():Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Colors.blueAccent,
         elevation: 1,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.green,
+            //color: Colors.blueAccent,
           ),
           onPressed: () {
             Navigator.of(context).pop();
@@ -110,6 +111,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF73AEF5),
+              Color(0xFF61A4F1),
+              Color(0xFF478DE0),
+              Color(0xFF398AE5),
+            ],
+            stops: [0.1, 0.4, 0.7, 0.9],
+          ),
+        ),
         padding: EdgeInsets.only(left: 16, top: 25, right: 16),
         child: GestureDetector(
           onTap: () {
@@ -119,7 +133,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               Text(
                 "Edit Profile",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500,color: Colors.white),
               ),
               SizedBox(
                 height: 15,
@@ -138,7 +152,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             BoxShadow(
                                 spreadRadius: 2,
                                 blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.white,
                                 offset: Offset(0, 10))
                           ],
                           shape: BoxShape.circle,
@@ -160,7 +174,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               width: 4,
                               color: Theme.of(context).scaffoldBackgroundColor,
                             ),
-                            color: Colors.green,
+                            color: Colors.blueAccent,
                           ),
                           child: GestureDetector(
                             onTap: (){
@@ -186,12 +200,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(bottom: 3),
                     labelText: 'Full Name',
+                    labelStyle: TextStyle(color: Colors.white),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: userSnap.documents[0].data['fullName'].toString(),
                     hintStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                     validator: (val) => val.isEmpty
@@ -206,12 +221,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(bottom: 3),
                     labelText: 'Location',
+                    labelStyle: TextStyle(color: Colors.white),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: (userSnap.documents[0].data['location'] != null)?userSnap.documents[0].data['location'].toString():'',
                     hintStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                     validator: (val) => val.isEmpty
@@ -225,13 +241,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  OutlineButton(
+                  FlatButton(
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                    color: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 50),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
                     child: Text("CANCEL",
                         style: TextStyle(
                             fontSize: 14,
@@ -243,7 +260,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       //uploadPic();
                       _updateDetails();
                     },
-                    color: Colors.green,
+                    color: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 50),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
@@ -252,7 +269,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       style: TextStyle(
                           fontSize: 14,
                           letterSpacing: 2.2,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                   )
                 ],
@@ -275,3 +292,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 }
+
+/*
+OutlineButton(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("CANCEL",
+                        style: TextStyle(
+                            fontSize: 14,
+                            letterSpacing: 2.2,
+                            color: Colors.black)),
+                  ),
+ */

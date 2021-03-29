@@ -24,14 +24,17 @@ class _ManageBlogsState extends State<ManageBlogs> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Manage your blogs",style: TextStyle(
-                    fontSize: 34,
-                  ),),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Manage blogs",style: TextStyle(
+                      fontSize: 34,
+                    ),),
+                  ],
+                ),
               ),
               SizedBox(height: 10.0,),
               SizedBox(

@@ -17,7 +17,7 @@ class AboutPage extends StatelessWidget {
                 style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold)),
             SizedBox(height: 30.0),
             Text(
-                "This is a blogging app made using Flutter and Firebase. Users can now start posting content very easily without any hassle. Search for other users around the globe and also see other people's content. Like other people's blog posts by hitting the thumbs up icon.",
+                "This is a blogging app made using Flutter and Firebase. Users can now start posting content very easily. Search for other users around the globe and also see other people's content. Like other people's blog posts.",
                 style: TextStyle(fontSize: 18.0)),
           ],
         ),

@@ -43,12 +43,7 @@ class _DeletePostViewState extends State<DeletePostView> {
         .deleteBlogPost(widget.blogPostId)
         .then((res) async {
       //after saving data navigate to show the BlogPost
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) =>
-              HomePage(),
-        ),
-      );
+      Navigator.of(context).pop();
       print('-------------result-------------------');
       print(res);
     });
@@ -67,6 +62,7 @@ class _DeletePostViewState extends State<DeletePostView> {
       child: Text("Continue"),
       onPressed:  () {
         _onDelete();
+        Navigator.of(context).pop();
       },
     );
 

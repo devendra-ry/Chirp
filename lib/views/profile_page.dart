@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return _isLoading?Loading():Scaffold(
-      backgroundColor: Color(0xff09031d),
+      //backgroundColor: Color(0xff09031d),
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         elevation: 0,
-        backgroundColor: Color(0xff09031d),
+        //backgroundColor: Color(0xff09031d),
         actions: [
           Padding(padding: EdgeInsets.all(8.0),
             child: GestureDetector(
@@ -72,56 +72,164 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 28.0,top:7),
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage(userSnap.documents[0].data['profileImage'].toString()),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 38.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        userSnap.documents[0].data['fullName'].toString(),
-                        style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        color: Colors.white,
-                      ),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.location_on,
-                            color: Colors.white,size:17),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: (userSnap.documents[0].data['location'] != null)?Text(userSnap.documents[0].data['location'].toString(),style: TextStyle(
-                                color: Colors.white,
-                              ),):Text('Not Provided',style: TextStyle(
-                                color: Colors.white,
-                              ),),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF73AEF5),
+                Color(0xFF61A4F1),
+                Color(0xFF478DE0),
+                Color(0xFF398AE5),
               ],
+              stops: [0.1, 0.4, 0.7, 0.9],
             ),
-            Padding(
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 28.0,top:7),
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(userSnap.documents[0].data['profileImage'].toString()),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 38.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          userSnap.documents[0].data['fullName'].toString(),
+                          style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          color: Colors.white,
+                        ),
+                        ),
+                        Padding(padding: EdgeInsets.only(left: 8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.location_on,
+                              color: Colors.white,size:17),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: (userSnap.documents[0].data['location'] != null)?Text(userSnap.documents[0].data['location'].toString(),style: TextStyle(
+                                  color: Colors.white,
+                                ),):Text('Not Provided',style: TextStyle(
+                                  color: Colors.white,
+                                ),),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+
+                  width: double.infinity,
+                  margin: EdgeInsets.only(top: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(34),bottom: Radius.circular(34))
+                  ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text("Total posts",style: TextStyle(
+                                      fontSize: 40.0,
+                                    ),),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: Text('${userSnap.documents[0].data['posts'].length}',style: TextStyle(
+                                      fontSize: 40.0,
+                                    ),),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text("Total likes",style: TextStyle(
+                                      fontSize: 40.0,
+                                    ),),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: Text('${userSnap.documents[0].data['totalLikes'].length}',style: TextStyle(
+                                      fontSize: 40.0,
+                                    ),),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text("Total dislikes",style: TextStyle(
+                                      fontSize: 40.0,
+                                    ),),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: Text('${userSnap.documents[0].data['totalDisLikes'].length}',style: TextStyle(
+                                      fontSize: 40.0,
+                                    ),),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+              ),
+                ),
+              ),
+            ],
+          ),
+        ),
+    );
+  }
+}
+
+/*
+Padding(
               padding: const EdgeInsets.only(right: 38.0,left: 38.0,top:15.0,bottom: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,21 +290,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(34))
-              ),
-                child: Column(),
-            ),
-            ),
-          ],
-        ),
-    );
-  }
-}
+*/
 
 

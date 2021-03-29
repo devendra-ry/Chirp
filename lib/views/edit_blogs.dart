@@ -66,7 +66,12 @@ class _EditBlogsState extends State<EditBlogs> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 20.0),
-          Text("No blogs to display"),
+          Center(
+            child: Text(
+              "No blogs",style: TextStyle(
+              fontSize: 30.0,
+            ),),
+          ),
         ],
       ),
     );

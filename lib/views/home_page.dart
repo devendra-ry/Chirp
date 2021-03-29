@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Your Blogs',
+          'Home',
           style: TextStyle(fontFamily: 'OpenSans'),
         ),
       ),

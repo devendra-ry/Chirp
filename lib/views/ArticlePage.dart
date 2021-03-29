@@ -83,7 +83,7 @@ class _ArticlePageState extends State<ArticlePage> {
     }
 
     print(blogPostSnap.data);
-    print('----------------------${blogPostSnap.data['favourite']}');
+    print('----------------------${blogPostSnap.data['blogPostId']}');
 
     await DatabaseService(uid: widget.userId).getUserDataID(widget.userId).then((res) {
       setState(() {

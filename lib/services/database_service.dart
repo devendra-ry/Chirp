@@ -33,6 +33,8 @@ class DatabaseService {
       'follow': [],
       'followers': [],
       'location': '',
+      'totalLikes': [],
+      'totalDisLikes': [],
       'profileImage' : 'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4',
     });
   }
@@ -88,7 +90,7 @@ class DatabaseService {
     await blogPostsRef.updateData({'blogPostId': blogPostsRef.documentID});
 
     await userRef.updateData({
-      'posts': FieldValue.arrayUnion([title])
+      'posts': FieldValue.arrayUnion([blogPostsRef.documentID])
     });
 
     return blogPostsRef.documentID;
@@ -122,7 +124,13 @@ class DatabaseService {
 
   //delete blog post
   Future deleteBlogPost(String id) async {
+    DocumentReference userRef = userCollection.document(uid);
     DocumentReference blogRef = blogCollection.document(id);
+    DocumentReference comRef = commentCollection.document(id);
+    await userRef.updateData({
+      'posts': FieldValue.arrayRemove([id]),
+    });
+    await comRef.delete();
     await blogRef.delete();
   }
 
@@ -189,14 +197,16 @@ class DatabaseService {
 
     if (likedPosts.contains(blogPostId)) {
       userRef.updateData({
-        'likedPosts': FieldValue.arrayRemove([blogPostId])
+        'likedPosts': FieldValue.arrayRemove([blogPostId]),
+        'totalLikes': FieldValue.arrayRemove([blogPostId]),
       });
       blogPostRef.updateData({
         'likedBy': FieldValue.arrayRemove([uid])
       });
     } else {
       userRef.updateData({
-        'likedPosts': FieldValue.arrayUnion([blogPostId])
+        'likedPosts': FieldValue.arrayUnion([blogPostId]),
+        'totalLikes': FieldValue.arrayUnion([blogPostId]),
       });
       blogPostRef.updateData({
         'likedBy': FieldValue.arrayUnion([uid])
@@ -216,14 +226,16 @@ class DatabaseService {
 
     if (dislikedPosts.contains(blogPostId)) {
       userRef.updateData({
-        'dislikedPosts': FieldValue.arrayRemove([blogPostId])
+        'dislikedPosts': FieldValue.arrayRemove([blogPostId]),
+        'totalDisLikes' : FieldValue.arrayRemove([blogPostId]),
       });
       blogPostRef.updateData({
         'dislikedBy': FieldValue.arrayRemove([uid])
       });
     } else {
       userRef.updateData({
-        'dislikedPosts': FieldValue.arrayUnion([blogPostId])
+        'dislikedPosts': FieldValue.arrayUnion([blogPostId]),
+        'totalDisLikes' : FieldValue.arrayUnion([blogPostId]),
       });
       blogPostRef.updateData({
         'dislikedBy': FieldValue.arrayUnion([uid])
@@ -278,6 +290,15 @@ class DatabaseService {
 
   //save comments
   Future saveComment(String uid,String name, String blogID, String comment) async{
+    commentCollection.document(blogID).setData({
+      'userId': uid,
+      'userName': name,
+      'comID': blogID,
+      'comment': comment,
+      'createdAt': new DateTime.now(),
+      'date': DateFormat.yMMMd('en_US').format(new DateTime.now()),
+    });
+    /*
     DocumentReference comRef = await Firestore.instance.collection('comments').add({
       'userId': uid,
       'userName': name,
@@ -288,6 +309,7 @@ class DatabaseService {
     });
 
     return comRef.documentID;
+     */
   }
 
   //get comments
