@@ -39,19 +39,23 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return _isLoading?Loading():Scaffold(
-      //backgroundColor: Color(0xff09031d),
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Profile',
+          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
+        ),
         leading: GestureDetector(
           onTap: () {
             Navigator.of(context).pop();
           },
           child: Icon(
-            Icons.arrow_back,  // add custom icons also
+            Icons.arrow_back,
+              color: Colors.white// add custom icons also
           ),
         ),
         elevation: 0,
@@ -67,12 +71,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   _getUserDetails();
                 }));
               },
-              child: Icon(Icons.create),
+              child: Icon(Icons.create,color: Colors.white),
             ),
           ),
         ],
       ),
         body: Container(
+          /*
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -86,59 +91,63 @@ class _ProfilePageState extends State<ProfilePage> {
               stops: [0.1, 0.4, 0.7, 0.9],
             ),
           ),
+           */
+          //color: Colors.white,
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 28.0,top:7),
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(userSnap.documents[0].data['profileImage'].toString()),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 28.0,top:7),
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(userSnap.documents[0].data['profileImage'].toString()),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 38.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          userSnap.documents[0].data['fullName'].toString(),
-                          style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28,
-                          color: Colors.white,
-                        ),
-                        ),
-                        Padding(padding: EdgeInsets.only(left: 8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.location_on,
-                              color: Colors.white,size:17),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: (userSnap.documents[0].data['location'] != null)?Text(userSnap.documents[0].data['location'].toString(),style: TextStyle(
-                                  color: Colors.white,
-                                ),):Text('Not Provided',style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 38.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userSnap.documents[0].data['fullName'].toString(),
+                            style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Colors.black,
                           ),
-                        )
-                      ],
+                          ),
+                          Padding(padding: EdgeInsets.only(left: 8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(Icons.location_on,
+                                color: Colors.black,size:17),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: (userSnap.documents[0].data['location'] != null)?Text(userSnap.documents[0].data['location'].toString(),style: TextStyle(
+                                    color: Colors.black,
+                                  ),):Text('Not Provided',style: TextStyle(
+                                    color: Colors.black,
+                                  ),),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Container(
-
                   width: double.infinity,
                   margin: EdgeInsets.only(top: 15),
                   decoration: BoxDecoration(
@@ -157,14 +166,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Expanded(
                                   child: Center(
                                     child: Text("Total posts",style: TextStyle(
-                                      fontSize: 40.0,
+                                      fontSize: 30.0,
                                     ),),
                                   ),
                                 ),
                                 Expanded(
                                   child: Center(
                                     child: Text('${userSnap.documents[0].data['posts'].length}',style: TextStyle(
-                                      fontSize: 40.0,
+                                      fontSize: 30.0,
                                     ),),
                                   ),
                                 ),
@@ -179,14 +188,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Expanded(
                                   child: Center(
                                     child: Text("Total likes",style: TextStyle(
-                                      fontSize: 40.0,
+                                      fontSize: 30.0,
                                     ),),
                                   ),
                                 ),
                                 Expanded(
                                   child: Center(
                                     child: Text('${userSnap.documents[0].data['totalLikes'].length}',style: TextStyle(
-                                      fontSize: 40.0,
+                                      fontSize: 30.0,
                                     ),),
                                   ),
                                 ),
@@ -201,14 +210,36 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Expanded(
                                   child: Center(
                                     child: Text("Total dislikes",style: TextStyle(
-                                      fontSize: 40.0,
+                                      fontSize: 30.0,
                                     ),),
                                   ),
                                 ),
                                 Expanded(
                                   child: Center(
                                     child: Text('${userSnap.documents[0].data['totalDisLikes'].length}',style: TextStyle(
-                                      fontSize: 40.0,
+                                      fontSize: 30.0,
+                                    ),),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text("Total followers",style: TextStyle(
+                                      fontSize: 30.0,
+                                    ),),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: Text('${userSnap.documents[0].data['totalLikes'].length}',style: TextStyle(
+                                      fontSize: 30.0,
                                     ),),
                                   ),
                                 ),

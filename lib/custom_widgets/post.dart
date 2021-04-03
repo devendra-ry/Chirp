@@ -53,14 +53,25 @@ class _PostTileState extends State<PostTile> {
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticlePage(userId: _user.uid, blogPostId: widget.blogPostId,postImage: widget.postImage)));
       },
-      child: Column(
-        children: [
-          header(),
-          Container(
-            constraints: BoxConstraints.expand(height: height * 0.3),
-            child: Image.network(widget.postImage),
-          ),
-        ],
+      child: Container(
+        //padding: EdgeInsets.all(10.0),
+        margin: EdgeInsets.all(6.0),
+        decoration: BoxDecoration(
+            border: Border.all(color: Color.fromRGBO(154, 183, 211, 1.0)),
+            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+        ),
+        child: Column(
+          children: [
+            header(),
+            Divider(
+              color: Color.fromRGBO(154, 183, 211, 1.0),
+            ),
+            Container(
+              constraints: BoxConstraints.expand(height: height * 0.3),
+              child: Image.network(widget.postImage),
+            ),
+          ],
+        ),
       ),
     );
   }

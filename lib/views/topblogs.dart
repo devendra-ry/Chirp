@@ -131,9 +131,11 @@ class _TopBlogsState extends State<TopBlogs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           'Top Blogs',
-          style: TextStyle(fontFamily: 'OpenSans'),
+          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
         ),
       ),
       body: blogPostsList(),

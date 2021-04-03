@@ -33,6 +33,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _isLoading = false;
   String _error = '';
+  bool _passwordVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = false;
+  }
 
   _onRegister() async {
     //check if the user entered correct info
@@ -173,11 +180,27 @@ class _RegisterPageState extends State<RegisterPage> {
                                 hintText: 'Password',
                                 hintStyle: TextStyle(color: Colors.white70),
                                 prefixIcon:
-                                    Icon(Icons.lock, color: Colors.white)),
+                                    Icon(Icons.lock, color: Colors.white),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                  // Based on passwordVisible state choose the icon
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  // Update the state i.e. toogle the state of passwordVisible variable
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
+                            ),
                             validator: (val) => val.length < 6
                                 ? 'Password not strong enough'
                                 : null,
-                            obscureText: true,
+                            obscureText: _passwordVisible,
                           ),
                           SizedBox(height: height * 0.02),
                           Text(
@@ -196,12 +219,27 @@ class _RegisterPageState extends State<RegisterPage> {
                               hintText: 'Confirm Password',
                               hintStyle: TextStyle(color: Colors.white70),
                               prefixIcon: Icon(Icons.lock, color: Colors.white),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  // Based on passwordVisible state choose the icon
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  // Update the state i.e. toogle the state of passwordVisible variable
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
                             ),
                             validator: (val) =>
                                 val == _passwordEditingController.text
                                     ? null
                                     : 'Does not match the password',
-                            obscureText: true,
+                            obscureText: _passwordVisible,
                           ),
                           SizedBox(height: height * 0.05),
                           SizedBox(

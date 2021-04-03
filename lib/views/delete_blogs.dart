@@ -125,9 +125,11 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           'Delete Blogs',
-          style: TextStyle(fontFamily: 'OpenSans'),
+          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
         ),
       ),
       body: blogPostsList(),

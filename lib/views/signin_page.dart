@@ -31,6 +31,13 @@ class _SignInPageState extends State<SignInPage> {
 
   bool _isLoading = false;
   String _error = '';
+  bool _passwordVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = false;
+  }
 
   //SignIn method
   _onSignIn() async {
@@ -160,11 +167,26 @@ class _SignInPageState extends State<SignInPage> {
                             hintText: '********',
                             hintStyle: TextStyle(color: Colors.white70),
                             prefixIcon: Icon(Icons.lock, color: Colors.white),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                // Based on passwordVisible state choose the icon
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
                           ),
                           validator: (val) => val.length < 6
                               ? 'Password not strong enough'
                               : null,
-                          obscureText: true,
+                          obscureText: !_passwordVisible,
                         ),
                         FlatButton(
                           onPressed: () => Navigator.of(context).push(

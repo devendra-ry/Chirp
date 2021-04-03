@@ -149,11 +149,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'Home',
-          style: TextStyle(fontFamily: 'OpenSans'),
+          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       drawer: Drawer(
         child: Container(
@@ -162,11 +167,11 @@ class _HomePageState extends State<HomePage> {
               UserAccountsDrawerHeader(
                 accountName: Text(
                   _userName,
-                  style: TextStyle(fontFamily: 'OpenSans'),
+                  style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
                 ),
                 accountEmail: Text(
                   _userEmail,
-                  style: TextStyle(fontFamily: 'OpenSans'),
+                  style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
                 ),
                 currentAccountPicture: CircleAvatar(
                   backgroundImage: NetworkImage(
@@ -176,14 +181,13 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.home, color: Colors.black),
+                leading: Icon(Icons.home, color: Colors.blueGrey),
                 title: Text(
                   'Home',
                   style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
                 ),
               ),
-              Divider(),
               ListTile(
                 onTap: () {
                   Navigator.push(
@@ -198,14 +202,13 @@ class _HomePageState extends State<HomePage> {
                 },
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.person, color: Colors.black),
+                leading: Icon(Icons.person, color: Colors.blueGrey),
                 title: Text(
                   'Profile',
                   style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
                 ),
               ),
-              Divider(),
               ListTile(
                 onTap: () {
                   Navigator.push(
@@ -217,14 +220,13 @@ class _HomePageState extends State<HomePage> {
                 },
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.search, color: Colors.black),
+                leading: Icon(Icons.search, color: Colors.blueGrey),
                 title: Text(
                   'Search',
                   style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
                 ),
               ),
-              Divider(),
               ListTile(
                 onTap: () {
                   Navigator.push(
@@ -236,14 +238,13 @@ class _HomePageState extends State<HomePage> {
                 },
                 contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.edit, color: Colors.black),
+                leading: Icon(Icons.edit, color: Colors.blueGrey),
                 title: Text(
                   'Manage Blogs',
                   style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
                 ),
               ),
-              Divider(),
               ListTile(
                 onTap: () {
                   Navigator.push(
@@ -255,11 +256,11 @@ class _HomePageState extends State<HomePage> {
                 },
                 contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.arrow_drop_up, color: Colors.black),
+                leading: Icon(Icons.arrow_drop_up, color: Colors.blueGrey),
                 title: Text(
                   'Top Blogs',
                   style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                  TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
                 ),
               ),
               Divider(),
@@ -274,14 +275,13 @@ class _HomePageState extends State<HomePage> {
                 },
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.info, color: Colors.black),
+                leading: Icon(Icons.info, color: Colors.blueGrey),
                 title: Text(
                   'About',
                   style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.black54),
+                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
                 ),
               ),
-              Divider(),
               ListTile(
                 onTap: () async {
                   await _authService.signOut();
@@ -320,7 +320,7 @@ class _HomePageState extends State<HomePage> {
               }));
         },
         child: Icon(Icons.create, color: Colors.white, size: 30.0),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromRGBO(154, 183, 211, 1.0),
         elevation: 10,
       ),
     );

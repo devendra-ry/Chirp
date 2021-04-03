@@ -93,14 +93,24 @@ class _DeletePostViewState extends State<DeletePostView> {
         //Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditPost(userId: _user.uid, blogPostId: widget.blogPostId,postImage: widget.postImage)));
         showAlertDialog(context);
       },
-      child: Column(
-        children: [
-          header(),
-          Container(
-            constraints: BoxConstraints.expand(height: height * 0.3),
-            child: Image.network(widget.postImage),
-          ),
-        ],
+      child: Container(
+        margin: EdgeInsets.all(6.0),
+        decoration: BoxDecoration(
+          border: Border.all(color: Color.fromRGBO(154, 183, 211, 1.0)),
+          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+        ),
+        child: Column(
+          children: [
+            header(),
+            Divider(
+              color: Color.fromRGBO(154, 183, 211, 1.0),
+            ),
+            Container(
+              constraints: BoxConstraints.expand(height: height * 0.3),
+              child: Image.network(widget.postImage),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -99,7 +99,10 @@ class _ArticlePageState extends State<ArticlePage> {
     final height = MediaQuery.of(context).size.height;
     return _isLoading ? Loading() : Scaffold(
       appBar: AppBar(
-        title: Text(blogPostDetails.blogPostTitle),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(blogPostDetails.blogPostTitle,
+          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.share), onPressed: (){
             share(context);

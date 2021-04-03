@@ -96,10 +96,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return _isLoading?Loading():Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
-        elevation: 1,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(
+          'Edit profile',
+          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
+        ),
+        //elevation: 1,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -111,6 +118,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
       body: Container(
+        /*
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -124,6 +132,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             stops: [0.1, 0.4, 0.7, 0.9],
           ),
         ),
+         */
         padding: EdgeInsets.only(left: 16, top: 25, right: 16),
         child: GestureDetector(
           onTap: () {
@@ -131,6 +140,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           },
           child: ListView(
             children: [
+              /*
               Text(
                 "Edit Profile",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500,color: Colors.white),
@@ -138,6 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               SizedBox(
                 height: 15,
               ),
+               */
               Center(
                 child: Stack(
                   children: [
@@ -200,13 +211,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(bottom: 3),
                     labelText: 'Full Name',
-                    labelStyle: TextStyle(color: Colors.white),
+                    labelStyle: TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: userSnap.documents[0].data['fullName'].toString(),
                     hintStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.grey,
                     ),
                   ),
                     validator: (val) => val.isEmpty
@@ -221,13 +232,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(bottom: 3),
                     labelText: 'Location',
-                    labelStyle: TextStyle(color: Colors.white),
+                    labelStyle: TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: (userSnap.documents[0].data['location'] != null)?userSnap.documents[0].data['location'].toString():'',
                     hintStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.grey,
                     ),
                   ),
                     validator: (val) => val.isEmpty
@@ -241,37 +252,72 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FlatButton(
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text("CANCEL",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      //uploadPic();
-                      _updateDetails();
-                    },
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text(
-                      "SAVE",
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.black),
+                  Expanded( 
+                    child: Container(
+                      height: height * 0.070,
+                      margin: EdgeInsets.all(10),
+                      child: RaisedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0)),
+                        padding: EdgeInsets.all(0.0),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xff374ABE), Color(0xff64B6FF)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(30.0)),
+                          child: Container(
+                            constraints:
+                            BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Cancel",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  )
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: height * 0.070,
+                      margin: EdgeInsets.all(10),
+                      child: RaisedButton(
+                        onPressed: () {
+                          _updateDetails();
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0)),
+                        padding: EdgeInsets.all(0.0),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xff374ABE), Color(0xff64B6FF)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(30.0)),
+                          child: Container(
+                            constraints:
+                            BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Save",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(
@@ -309,3 +355,39 @@ OutlineButton(
                             color: Colors.black)),
                   ),
  */
+
+
+/*
+                  FlatButton(
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text("CANCEL",
+                        style: TextStyle(
+                            fontSize: 14,
+                            letterSpacing: 2.2,
+                            color: Colors.black)),
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      //uploadPic();
+                      _updateDetails();
+                    },
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      "SAVE",
+                      style: TextStyle(
+                          fontSize: 14,
+                          letterSpacing: 2.2,
+                          color: Colors.black),
+                    ),
+                  )
+
+                   */

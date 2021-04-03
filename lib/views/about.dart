@@ -5,7 +5,11 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("About"),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("About",style: TextStyle(
+            fontFamily: 'OpenSans',color: Colors.white,
+        ),),
         elevation: 0.0,
       ),
       body: Padding(
