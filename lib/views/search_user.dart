@@ -6,6 +6,10 @@ import 'package:randomizer/randomizer.dart';
 
 class SearchUser extends StatefulWidget {
 
+  final String cuid;
+
+  const SearchUser({Key key, this.cuid}) : super(key: key);
+
   @override
   _SearchUserState createState() => _SearchUserState();
 }
@@ -19,6 +23,13 @@ class _SearchUserState extends State<SearchUser> {
   Randomizer randomizer = Randomizer();
   List<Color> colorsList = [Color(0xFF083663), Color(0xFFFE161D), Color(0xFF682D27),
     Color(0xFF61538D), Color(0xFF08363B), Color(0xFF319B4B), Color(0xFFF4D03F)];
+
+  @override
+  void initState() {
+    super.initState();
+    print("++++++++++++++++++++++++++++++++");
+    print(widget.cuid);
+  }
 
   _initiateSearch() async {
     if(searchEditingController.text.isNotEmpty){
@@ -51,7 +62,7 @@ class _SearchUserState extends State<SearchUser> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserDetailsPage(userId: searchResultSnapshot.documents[index].data['userId'], fullName: searchResultSnapshot.documents[index].data['fullName'], email: searchResultSnapshot.documents[index].data['email'],)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserDetailsPage(cuid: widget.cuid, userId: searchResultSnapshot.documents[index].data['userId'], fullName: searchResultSnapshot.documents[index].data['fullName'], email: searchResultSnapshot.documents[index].data['email'],)));
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),

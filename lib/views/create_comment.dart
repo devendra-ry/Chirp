@@ -34,15 +34,28 @@ class _CreateCommentState extends State<CreateComment> {
                 children: [
                   SizedBox(height: height * 0.05),
                   TextFormField(
+                    decoration: new InputDecoration(
+                      prefixIcon: Icon(Icons.comment),
+                      fillColor: Colors.white,
+                      border: new OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(25.0),
+                        borderSide: new BorderSide(
+                        ),
+                      ),
+                      //fillColor: Colors.green
+                    ),
                     style: TextStyle(
                       color: Colors.blue,
                       fontFamily: 'OpenSans',
                     ),
                     controller: _commentEditingController,
+                    /*
                     decoration: textInputDecoration.copyWith(
                       prefixIcon: Icon(Icons.comment,
                           color: Colors.blue),
                     ),
+
+                     */
                     validator: (val) {
                       return RegExp(
                           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

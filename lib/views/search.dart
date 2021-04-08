@@ -1,9 +1,15 @@
 import 'package:blogging_app/views/Favourites.dart';
 import 'package:blogging_app/views/search_blog.dart';
+import 'package:blogging_app/views/search_by_cat.dart';
 import 'package:blogging_app/views/search_user.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
+
+  final String cuid;
+
+  const SearchPage({Key key, this.cuid}) : super(key: key);
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -34,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: RaisedButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => SearchUser()));
+                          MaterialPageRoute(builder: (context) => SearchUser(cuid: widget.cuid,)));
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80.0)),
@@ -135,7 +141,8 @@ class _SearchPageState extends State<SearchPage> {
                   margin: EdgeInsets.all(10),
                   child: RaisedButton(
                     onPressed: () {
-
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => Category()));
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80.0)),
@@ -153,7 +160,7 @@ class _SearchPageState extends State<SearchPage> {
                         BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
                         alignment: Alignment.center,
                         child: Text(
-                          "//",
+                          "Category",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white, fontSize: 15),
                         ),

@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _getUserDetails();
+    print(widget.uid);
   }
 
   _getUserDetails () async{
@@ -238,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: Text('${userSnap.documents[0].data['totalLikes'].length}',style: TextStyle(
+                                    child: Text('${userSnap.documents[0].data['followers'].length}',style: TextStyle(
                                       fontSize: 30.0,
                                     ),),
                                   ),

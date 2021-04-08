@@ -66,7 +66,7 @@ class DatabaseService {
 
   // save blog post
   Future saveBlogPost(
-      String title, String author, String authorEmail, String content, String url) async {
+      String title, String author, String authorEmail, String content, String url,String category) async {
 
     DocumentReference userRef = userCollection.document(uid);
 
@@ -83,6 +83,8 @@ class DatabaseService {
       'likedBy': [],
       'dislikedBy' : [],
       'createdAt': new DateTime.now(),
+      'category' : category,
+      'categoryArray' :category.toLowerCase().split(" "),
       'favourite': false,
       'date': DateFormat.yMMMd('en_US').format(new DateTime.now())
     });
@@ -173,6 +175,18 @@ class DatabaseService {
     return snapshot;
   }
 
+  //search blogposts by category
+  searchBlogPostsByCategory(String category) async {
+    List<String> searchList = category.toLowerCase().split(" ");
+    QuerySnapshot snapshot = await Firestore.instance
+        .collection('blogPosts')
+        .where('categoryArray', arrayContainsAny: searchList)
+        .getDocuments();
+    // print(snapshot.documents.length);
+
+    return snapshot;
+  }
+
   // search users by name
   searchUsersByName(String userName) async {
     List<String> searchList = userName.toLowerCase().split(" ");
@@ -240,6 +254,45 @@ class DatabaseService {
       blogPostRef.updateData({
         'dislikedBy': FieldValue.arrayUnion([uid])
       });
+    }
+  }
+
+
+  //follow
+  Future follow(String cuid, String userId) async {
+    DocumentReference userRef = userCollection.document(userId);
+    DocumentSnapshot userSnap = await userRef.get();
+    DocumentReference cuserRef = userCollection.document(cuid);
+    DocumentSnapshot cuserSnap = await cuserRef.get();
+    List<dynamic> follow = await userSnap.data['follow'];
+    if (follow.contains(cuid)) {
+
+    } else {
+      userRef.updateData({
+        'followers': FieldValue.arrayUnion([cuid]),
+      });
+      cuserRef.updateData({
+        'follow': FieldValue.arrayUnion([uid]),
+      });
+    }
+  }
+
+  //unfollow
+  Future unfollow(String cuid, String userId) async {
+    DocumentReference userRef = userCollection.document(userId);
+    DocumentSnapshot userSnap = await userRef.get();
+    DocumentReference cuserRef = userCollection.document(cuid);
+    DocumentSnapshot cuserSnap = await cuserRef.get();
+    List<dynamic> follow = await userSnap.data['followers'];
+    if (follow.contains(cuid)) {
+      userRef.updateData({
+        'followers': FieldValue.arrayRemove([cuid]),
+      });
+      cuserRef.updateData({
+        'follow': FieldValue.arrayRemove([uid]),
+      });
+    } else {
+
     }
   }
 

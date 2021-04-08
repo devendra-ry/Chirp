@@ -64,7 +64,7 @@ class _SearchBlogPostsState extends State<SearchBlogPosts> {
               blogPostId: searchResultSnapshot.documents[index].data['blogPostId'],
               blogPostTitle: searchResultSnapshot.documents[index].data['blogPostTitle'],
               blogPostContent: searchResultSnapshot.documents[index].data['blogPostContent'],
-              date: searchResultSnapshot.documents[index].data['date']
+              date: searchResultSnapshot.documents[index].data['date'],
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.0),

@@ -3,13 +3,13 @@ import 'package:blogging_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class SearchBlog extends StatefulWidget {
 
+class Category extends StatefulWidget {
   @override
-  _SearchBlogState createState() => _SearchBlogState();
+  _CategoryState createState() => _CategoryState();
 }
 
-class _SearchBlogState extends State<SearchBlog> {
+class _CategoryState extends State<Category> {
 
   TextEditingController searchEditingController = new TextEditingController();
   QuerySnapshot searchResultSnapshot;
@@ -21,7 +21,7 @@ class _SearchBlogState extends State<SearchBlog> {
       setState(() {
         _isLoading = true;
       });
-      await DatabaseService().searchBlogPostsByName(searchEditingController.text).then((snapshot) {
+      await DatabaseService().searchBlogPostsByCategory(searchEditingController.text).then((snapshot) {
         searchResultSnapshot = snapshot;
         // print(searchResultSnapshot.documents.length);
         setState(() {
@@ -46,12 +46,12 @@ class _SearchBlogState extends State<SearchBlog> {
           return Column(
             children: <Widget>[
               PostTile(
-                  userId: searchResultSnapshot.documents[index].data["userId"],
-                  blogPostId: searchResultSnapshot.documents[index].data['blogPostId'],
-                  blogPostTitle: searchResultSnapshot.documents[index].data['blogPostTitle'],
-                  blogPostContent: searchResultSnapshot.documents[index].data['blogPostContent'],
-                  date: searchResultSnapshot.documents[index].data['date'],
-                  postImage: searchResultSnapshot.documents[index].data['postImage'],
+                userId: searchResultSnapshot.documents[index].data["userId"],
+                blogPostId: searchResultSnapshot.documents[index].data['blogPostId'],
+                blogPostTitle: searchResultSnapshot.documents[index].data['blogPostTitle'],
+                blogPostContent: searchResultSnapshot.documents[index].data['blogPostContent'],
+                date: searchResultSnapshot.documents[index].data['date'],
+                postImage: searchResultSnapshot.documents[index].data['postImage'],
               ),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),

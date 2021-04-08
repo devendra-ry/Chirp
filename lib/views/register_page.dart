@@ -200,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: (val) => val.length < 6
                                 ? 'Password not strong enough'
                                 : null,
-                            obscureText: _passwordVisible,
+                            obscureText: !_passwordVisible,
                           ),
                           SizedBox(height: height * 0.02),
                           Text(

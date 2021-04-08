@@ -26,6 +26,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   //Text fields
   TextEditingController _titleEditingController = new TextEditingController();
   TextEditingController _contentEditingController = new TextEditingController();
+  TextEditingController _categoryEditingController = new TextEditingController();
 
   //form
   final _formKey = GlobalKey<FormState>();
@@ -48,7 +49,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       //
       await DatabaseService(uid: widget.uid)
           .saveBlogPost(_titleEditingController.text, widget.userName,
-              widget.userEmail, _contentEditingController.text, newURL)
+              widget.userEmail, _contentEditingController.text, newURL,_categoryEditingController.text)
           .then((res) async {
         //after saving data navigate to show the BlogPost
         Navigator.of(context).pushReplacement(
@@ -103,25 +104,67 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                 padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 40.0),
                 children: <Widget>[
                   TextFormField(
+                    decoration: new InputDecoration(
+                      hintText: "Blog title",
+                      fillColor: Colors.white,
+                      border: new OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(25.0),
+                        borderSide: new BorderSide(
+                        ),
+                      ),
+                      //fillColor: Colors.green
+                    ),
+                    /*
                     decoration: textInputDecoration.copyWith(
                       hintText: "Blog Title",
                       enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(color: Colors.black87, width: 2.0)),
                     ),
+
+                     */
                     validator: (val) =>
                         val.length < 1 ? 'This field cannot be blank' : null,
                     controller: _titleEditingController,
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
+                    decoration: new InputDecoration(
+                      hintText: "Category",
+                      fillColor: Colors.white,
+                      border: new OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(25.0),
+                        borderSide: new BorderSide(
+                        ),
+                      ),
+                      //fillColor: Colors.green
+                    ),
+                    validator: (val) =>
+                    val.length < 1 ? 'This field cannot be blank' : null,
+                    controller: _categoryEditingController,
+                  ),
+                  SizedBox(height: 20.0),
+                  TextFormField(
                     maxLines: 20,
+                    decoration: new InputDecoration(
+                      hintText: "Start writing...",
+                      fillColor: Colors.white,
+                      border: new OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(25.0),
+                        borderSide: new BorderSide(
+                        ),
+                      ),
+                      //fillColor: Colors.green
+                    ),
+                    /*
                     decoration: textInputDecoration.copyWith(
                       enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(color: Colors.black87, width: 2.0)),
                       hintText: "Start writing...",
                     ),
+
+                     */
                     validator: (val) =>
                         val.length < 1 ? 'This field cannot be blank' : null,
                     controller: _contentEditingController,

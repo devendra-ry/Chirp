@@ -26,7 +26,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController _location = new TextEditingController();
   File _image;
   final picker = ImagePicker();
-  String newURL = '';
+  String newURL = 'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
   String profileImage;
 
   @override
