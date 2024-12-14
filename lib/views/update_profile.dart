@@ -8,7 +8,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 class EditProfilePage extends StatefulWidget {
   final String uid;
   final String userEmail;
@@ -118,21 +117,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
       body: Container(
-        /*
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF73AEF5),
-              Color(0xFF61A4F1),
-              Color(0xFF478DE0),
-              Color(0xFF398AE5),
-            ],
-            stops: [0.1, 0.4, 0.7, 0.9],
-          ),
-        ),
-         */
         padding: EdgeInsets.only(left: 16, top: 25, right: 16),
         child: GestureDetector(
           onTap: () {
@@ -140,15 +124,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           },
           child: ListView(
             children: [
-              /*
-              Text(
-                "Edit Profile",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500,color: Colors.white),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-               */
               Center(
                 child: Stack(
                   children: [
@@ -338,56 +313,3 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 }
-
-/*
-OutlineButton(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("CANCEL",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
- */
-
-
-/*
-                  FlatButton(
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text("CANCEL",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      //uploadPic();
-                      _updateDetails();
-                    },
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text(
-                      "SAVE",
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.black),
-                    ),
-                  )
-
-                   */

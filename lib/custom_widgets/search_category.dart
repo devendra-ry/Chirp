@@ -3,7 +3,6 @@ import 'package:blogging_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-
 class SearchCategory extends StatefulWidget {
   @override
   _SearchCategoryState createState() => _SearchCategoryState();
@@ -42,18 +41,6 @@ class _SearchCategoryState extends State<SearchCategory> {
         shrinkWrap: true,
         itemCount: searchResultSnapshot.documents.length,
         itemBuilder: (context, index) {
-          // return ListTile(
-          //   title: Text(
-          //     searchResultSnapshot.documents[index].data["blogPostTitle"], style: TextStyle(fontWeight: FontWeight.bold),
-          //     overflow: TextOverflow.ellipsis,
-          //     maxLines: 1,
-          //   ),
-          //   subtitle: Text(
-          //     searchResultSnapshot.documents[index].data["blogPostContent"], style: TextStyle(fontSize: 13.0),
-          //     overflow: TextOverflow.ellipsis,
-          //     maxLines: 4,
-          //   ),
-          // );
           return Column(
             children: <Widget>[
               PostTile(

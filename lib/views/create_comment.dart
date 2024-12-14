@@ -1,5 +1,4 @@
 import 'package:blogging_app/services/database_service.dart';
-import 'package:blogging_app/shared/constansts.dart';
 import 'package:flutter/material.dart';
 
 class CreateComment extends StatefulWidget {
@@ -49,13 +48,6 @@ class _CreateCommentState extends State<CreateComment> {
                       fontFamily: 'OpenSans',
                     ),
                     controller: _commentEditingController,
-                    /*
-                    decoration: textInputDecoration.copyWith(
-                      prefixIcon: Icon(Icons.comment,
-                          color: Colors.blue),
-                    ),
-
-                     */
                     validator: (val) {
                       return RegExp(
                           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

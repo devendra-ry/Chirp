@@ -1,9 +1,5 @@
-import 'package:blogging_app/services/database_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:randomizer/randomizer.dart';
-
+import 'package:randomizer_null_safe/randomizer_null_safe.dart';
 
 class CommentTile extends StatefulWidget {
   final String userName;
@@ -13,15 +9,12 @@ class CommentTile extends StatefulWidget {
 
   const CommentTile({Key key, this.userName, this.blogPostId, this.comment, this.date}) : super(key: key);
 
-
   @override
   _CommentTileState createState() => _CommentTileState();
 }
 
 class _CommentTileState extends State<CommentTile> {
-  Randomizer randomizer = Randomizer();
-  List<Color> colorsList = [Color(0xFF083663), Color(0xFFFE161D), Color(0xFF682D27),
-    Color(0xFF61538D), Color(0xFF08363B), Color(0xFF319B4B), Color(0xFFF4D03F)];
+  Randomizer randomizer = Randomizer.instance();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +33,7 @@ class _CommentTileState extends State<CommentTile> {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30.0,
-          backgroundColor: randomizer.getspecifiedcolor(colorsList),
+          backgroundColor: randomizer.randomColor(),
           child: Text(widget.userName.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
         ),
         title: Text(

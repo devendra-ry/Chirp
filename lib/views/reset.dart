@@ -146,38 +146,3 @@ class _ResetScreenState extends State<ResetScreen> {
           );
   }
 }
-
-/*
-final auth = FirebaseAuth.instance;
-String _email;
-
-Column(
-children: [
-Padding(
-padding: const EdgeInsets.all(8.0),
-child: TextField(
-keyboardType: TextInputType.emailAddress,
-decoration: InputDecoration(hintText: 'Email'),
-onChanged: (value) {
-setState(() {
-_email = value.trim();
-});
-},
-),
-),
-Row(
-mainAxisAlignment: MainAxisAlignment.spaceAround,
-children: [
-RaisedButton(
-child: Text('Send Request'),
-onPressed: () {
-auth.sendPasswordResetEmail(email: _email);
-Navigator.of(context).pop();
-},
-color: Theme.of(context).accentColor,
-),
-],
-),
-],
-),
- */

@@ -109,19 +109,6 @@ class DatabaseService {
     });
 
     return blogRef.documentID;
-
-    /*
-    DocumentReference userRef = userCollection.document(uid);
-    DocumentReference blogPostsRef = Firestore.instance.collection('blogPosts').document(id);
-    await blogPostsRef.updateData({
-      'blogPostTitle': title,
-      'blogPostTitleArray': title.toLowerCase().split(" "),
-      'blogPostContent': content,
-      'postImage' : url,
-    });
-
-    return blogPostsRef.documentID;
-    */
   }
 
   //delete blog post
@@ -296,15 +283,6 @@ class DatabaseService {
     }
   }
 
-  //Storage URL
-  /*
-  printUrl() async {
-    StorageReference ref = FirebaseStorage.instance.ref().child("profiles/blank-profile-picture-973460_960_720.png");
-    String url = (await ref.getDownloadURL()).toString();
-    print('$url');
-  }
-  */
-
   // get user blogposts
   getTopBlogPosts() async {
     // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
@@ -351,18 +329,6 @@ class DatabaseService {
       'createdAt': new DateTime.now(),
       'date': DateFormat.yMMMd('en_US').format(new DateTime.now()),
     });
-    /*
-    DocumentReference comRef = await Firestore.instance.collection('comments').add({
-      'userId': uid,
-      'userName': name,
-      'comID': blogID,
-      'comment': comment,
-      'createdAt': new DateTime.now(),
-      'date': DateFormat.yMMMd('en_US').format(new DateTime.now()),
-    });
-
-    return comRef.documentID;
-     */
   }
 
   //get comments

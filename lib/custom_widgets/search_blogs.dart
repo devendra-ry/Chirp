@@ -3,8 +3,6 @@ import 'package:blogging_app/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
 class SearchBlogPosts extends StatefulWidget {
 
   @override

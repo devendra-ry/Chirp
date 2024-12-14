@@ -15,8 +15,7 @@ class AuthService {
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       // sign in with email and password
-      AuthResult result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       if (user.isEmailVerified) return _userFromFirebaseUser(user);
       return null;

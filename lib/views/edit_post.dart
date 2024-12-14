@@ -1,5 +1,3 @@
-//import 'dart:html';
-
 import 'package:blogging_app/models/blogpost.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/shared/constansts.dart';
@@ -33,11 +31,7 @@ class _EditPostState extends State<EditPost> {
   //Text fields
   TextEditingController _titleEditingController = new TextEditingController();
   TextEditingController _contentEditingController = new TextEditingController();
-
-  //form
   final _formKey = GlobalKey<FormState>();
-
-  //bool _isLoading = false;
 
   File _image;
   final picker = ImagePicker();
@@ -80,7 +74,6 @@ class _EditPostState extends State<EditPost> {
         _isLoading = true;
       });
 
-      //
       await DatabaseService(uid: widget.userId)
           .updateBlogPost(widget.blogPostId, _titleEditingController.text, _contentEditingController.text, newURL)
           .then((res) async {
@@ -97,10 +90,6 @@ class _EditPostState extends State<EditPost> {
       print("------------------------Data Updated------------------------------");
     }
   }
-
-  /*
-
-   */
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery,imageQuality: 50);

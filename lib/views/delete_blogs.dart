@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class DeleteBlogs extends StatefulWidget {
   @override
   _DeleteBlogsState createState() => _DeleteBlogsState();
@@ -87,11 +86,6 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  // return ListTile(
-                  //   title: Text(snapshot.data.documents[index].data['blogPostTitle']),
-                  //   subtitle: Text(snapshot.data.documents[index].data['blogPostContent']),
-                  //   trailing: Text(snapshot.data.documents[index].data['date']),
-                  // );
                   return Column(
                     children: <Widget>[
                       DeletePostView(
@@ -119,7 +113,6 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,7 @@ import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/views/user_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:randomizer/randomizer.dart';
+import 'package:randomizer_null_safe/randomizer_null_safe.dart';
 
 class SearchUser extends StatefulWidget {
 
@@ -20,9 +20,7 @@ class _SearchUserState extends State<SearchUser> {
   QuerySnapshot searchResultSnapshot;
   bool _isLoading = false;
   bool _hasUserSearched = false;
-  Randomizer randomizer = Randomizer();
-  List<Color> colorsList = [Color(0xFF083663), Color(0xFFFE161D), Color(0xFF682D27),
-    Color(0xFF61538D), Color(0xFF08363B), Color(0xFF319B4B), Color(0xFFF4D03F)];
+  Randomizer randomizer = Randomizer.instance();
 
   @override
   void initState() {
@@ -69,7 +67,7 @@ class _SearchUserState extends State<SearchUser> {
                   child: ListTile(
                     leading: CircleAvatar(
                       radius: 30.0,
-                      backgroundColor: randomizer.getspecifiedcolor(colorsList),
+                      backgroundColor: randomizer.randomColor(),
                       child: Text(searchResultSnapshot.documents[index].data['fullName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                     ),
                     title: Text(

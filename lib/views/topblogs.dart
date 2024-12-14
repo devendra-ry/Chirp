@@ -94,11 +94,6 @@ class _TopBlogsState extends State<TopBlogs> {
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  // return ListTile(
-                  //   title: Text(snapshot.data.documents[index].data['blogPostTitle']),
-                  //   subtitle: Text(snapshot.data.documents[index].data['blogPostContent']),
-                  //   trailing: Text(snapshot.data.documents[index].data['date']),
-                  // );
                   return Column(
                     children: <Widget>[
                       PostTile(

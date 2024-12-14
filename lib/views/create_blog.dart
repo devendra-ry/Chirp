@@ -1,7 +1,5 @@
 import 'package:blogging_app/services/database_service.dart';
-import 'package:blogging_app/shared/constansts.dart';
 import 'package:blogging_app/shared/loading.dart';
-import 'package:blogging_app/views/post_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -114,15 +112,6 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                       ),
                       //fillColor: Colors.green
                     ),
-                    /*
-                    decoration: textInputDecoration.copyWith(
-                      hintText: "Blog Title",
-                      enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black87, width: 2.0)),
-                    ),
-
-                     */
                     validator: (val) =>
                         val.length < 1 ? 'This field cannot be blank' : null,
                     controller: _titleEditingController,
@@ -156,15 +145,6 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                       ),
                       //fillColor: Colors.green
                     ),
-                    /*
-                    decoration: textInputDecoration.copyWith(
-                      enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black87, width: 2.0)),
-                      hintText: "Start writing...",
-                    ),
-
-                     */
                     validator: (val) =>
                         val.length < 1 ? 'This field cannot be blank' : null,
                     controller: _contentEditingController,

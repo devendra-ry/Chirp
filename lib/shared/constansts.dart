@@ -14,7 +14,3 @@ const textInputDecoration = InputDecoration(
     borderSide: BorderSide(color: Colors.red, width: 2.0)
   ),
 );
-
-
-
-

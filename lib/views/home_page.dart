@@ -1,5 +1,3 @@
-//import 'dart:html';
-
 import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
@@ -113,11 +111,6 @@ class _HomePageState extends State<HomePage> {
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  // return ListTile(
-                  //   title: Text(snapshot.data.documents[index].data['blogPostTitle']),
-                  //   subtitle: Text(snapshot.data.documents[index].data['blogPostContent']),
-                  //   trailing: Text(snapshot.data.documents[index].data['date']),
-                  // );
                   return Column(
                     children: <Widget>[
                       PostTile(
@@ -326,52 +319,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// GestureDetector(
-//           child: blogPostsList(),
-//           onVerticalDragDown: (DragDownDetails details) {
-//             _getBlogPosts();
-//             print("==============================");
-//           }),
-
-/*
-GestureDetector(
-child: Column(
-children: [
-Container(
-width: 200,
-height: 200,
-color: Colors.amber,
-),
-Flexible(
-child: blogPostsList(),
-)
-],
-),
-onVerticalDragDown: (DragDownDetails details) {
-_getBlogPosts();
-print("=================================================");
-},
-),
-*/
-
-/*
-GestureDetector(
-        child: Column(
-          children: [
-            Container(
-              width: 200,
-              height: 200,
-              color: Colors.amber,
-            ),
-            Flexible(
-              child: blogPostsList(),
-            )
-          ],
-        ),
-        onVerticalDragDown: (DragDownDetails details) {
-          _getBlogPosts();
-          print("=================================================");
-        },
-      ),
-*/

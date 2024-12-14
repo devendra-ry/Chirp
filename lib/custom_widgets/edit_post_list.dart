@@ -1,8 +1,7 @@
 import 'package:blogging_app/views/edit_post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:randomizer/randomizer.dart';
-
+import 'package:randomizer_null_safe/randomizer_null_safe.dart';
 
 class EditPostView extends StatefulWidget {
   final String userId;
@@ -28,9 +27,7 @@ class EditPostView extends StatefulWidget {
 class _EditPostViewState extends State<EditPostView> {
   FirebaseUser _user;
 
-  Randomizer randomizer = Randomizer();
-  List<Color> colorsList = [Color(0xFF083663), Color(0xFFFE161D), Color(0xFF682D27),
-    Color(0xFF61538D), Color(0xFF08363B), Color(0xFF319B4B), Color(0xFFF4D03F)];
+  Randomizer randomizer = Randomizer.instance();
 
   // initState
   @override
@@ -78,7 +75,7 @@ class _EditPostViewState extends State<EditPostView> {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30.0,
-          backgroundColor: randomizer.getspecifiedcolor(colorsList),
+          backgroundColor: randomizer.randomColor();
           child: Text(widget.blogPostTitle.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
         ),
         title: Text(

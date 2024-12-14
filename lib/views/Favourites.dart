@@ -12,7 +12,6 @@ class Favourites extends StatefulWidget {
 }
 
 class _FavouritesState extends State<Favourites> {
-  //get the info about logged in user
   final AuthService _authService = new AuthService();
 
   //variables
@@ -92,11 +91,6 @@ class _FavouritesState extends State<Favourites> {
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  // return ListTile(
-                  //   title: Text(snapshot.data.documents[index].data['blogPostTitle']),
-                  //   subtitle: Text(snapshot.data.documents[index].data['blogPostContent']),
-                  //   trailing: Text(snapshot.data.documents[index].data['date']),
-                  // );
                   return Column(
                     children: <Widget>[
                       PostTile(

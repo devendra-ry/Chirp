@@ -1,5 +1,4 @@
 import 'package:blogging_app/custom_widgets/edit_post_list.dart';
-import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
@@ -87,11 +86,6 @@ class _EditBlogsState extends State<EditBlogs> {
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  // return ListTile(
-                  //   title: Text(snapshot.data.documents[index].data['blogPostTitle']),
-                  //   subtitle: Text(snapshot.data.documents[index].data['blogPostContent']),
-                  //   trailing: Text(snapshot.data.documents[index].data['date']),
-                  // );
                   return Column(
                     children: <Widget>[
                       EditPostView(
@@ -119,7 +113,6 @@ class _EditBlogsState extends State<EditBlogs> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
