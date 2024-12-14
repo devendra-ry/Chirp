@@ -1,10 +1,10 @@
 class BlogPost {
-  final String blogPostTitle;
-  final String blogPostAuthor;
-  final String blogPostAuthorEmail;
-  final String blogPostContent;
-  final String date;
-  final String postImage;
+  final String? blogPostTitle;
+  final String? blogPostAuthor;
+  final String? blogPostAuthorEmail;
+  final String? blogPostContent;
+  final String? date;
+  final String? postImage;
 
   BlogPost({
     this.blogPostTitle,

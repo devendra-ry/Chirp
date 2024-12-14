@@ -1,5 +1,4 @@
 import 'package:blogging_app/helper_functions/helper_functions.dart';
-import 'package:blogging_app/models/user.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,15 +7,15 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // create user object based on FirebaseUser
-  User _userFromFirebaseUser(FirebaseUser user) {
+  User? _userFromFirebaseUser(User user) {
     return (user != null) ? User(uid: user.uid) : null;
   }
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       // sign in with email and password
-      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      FirebaseUser user = result.user;
+      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      User user = result.user;
       if (user.isEmailVerified) return _userFromFirebaseUser(user);
       return null;
     } catch (e) {
@@ -29,10 +28,10 @@ class AuthService {
       String fullName, String email, String password) async {
     try {
       // register with email and password
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      FirebaseUser user = result.user;
+      User user = result.user;
       await user.sendEmailVerification();
       // Create a new document for the user with uid in users collection
       await DatabaseService(uid: user.uid)

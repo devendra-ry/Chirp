@@ -1,7 +1,7 @@
-class User {
-  final String uid;
+class Visitor {
+  final String? uid;
 
-  User({
+  Visitor({
     this.uid
   });
 }

@@ -24,11 +24,11 @@ class _HomePageState extends State<HomePage> {
   final AuthService _authService = new AuthService();
 
   //variables
-  FirebaseUser _user;
-  QuerySnapshot userSnap;
+  User? _user;
+  QuerySnapshot? userSnap;
   String _userName = '';
   String _userEmail = '';
-  Stream _blogPosts;
+  Stream? _blogPosts;
   String profilePic = '';
   String defaultPic =
       'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
@@ -42,17 +42,17 @@ class _HomePageState extends State<HomePage> {
 
   _getBlogPosts() async {
     //get the current user
-    _user = await FirebaseAuth.instance.currentUser();
-    //get the name of the user stored locally
+    _user = await FirebaseAuth.instance.currentUser!;
+    //get the name of the user stored l!ocally
     await Helper.getUserNameSharedPreference().then((value) {
       setState(() {
-        _userName = value;
+        _userName = value!;
       });
     });
     //get the email of the user stored locally
     await Helper.getUserEmailSharedPreference().then((value) {
       setState(() {
-        _userEmail = value;
+        _userEmail = value!;
       });
     });
     //get the blogs of the user
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     await DatabaseService(uid: _user.uid).getUserDataID(_user.uid).then((res) {
       setState(() {
         userSnap = res;
-        profilePic = userSnap.documents[0].data['profileImage'].toString();
+        profilePic = userSnap.docs[0].data['profileImage'].toString();
       });
     });
   }
@@ -106,23 +106,23 @@ class _HomePageState extends State<HomePage> {
       stream: _blogPosts,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data.documents != null &&
-              snapshot.data.documents.length != 0) {
+          if (snapshot.data.docs != null &&
+              snapshot.data.docs.length != 0) {
             return ListView.builder(
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return Column(
                     children: <Widget>[
                       PostTile(
                           userId: _user.uid,
                           blogPostId:
-                              snapshot.data.documents[index].data['blogPostId'],
+                              snapshot.data.docs[index].data['blogPostId'],
                           blogPostTitle: snapshot
-                              .data.documents[index].data['blogPostTitle'],
+                              .data.docs[index].data['blogPostTitle'],
                           blogPostContent: snapshot
-                              .data.documents[index].data['blogPostContent'],
-                          date: snapshot.data.documents[index].data['date'],
-                          postImage: (snapshot.data.documents[index].data['postImage'] != null)? snapshot.data.documents[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
+                              .data.docs[index].data['blogPostContent'],
+                          date: snapshot.data.docs[index].data['date'],
+                          postImage: (snapshot.data.docs[index].data['postImage'] != null)? snapshot.data.docs[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 20.0),
                           child: Divider(height: 0.0)),

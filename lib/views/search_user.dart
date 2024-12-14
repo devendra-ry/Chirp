@@ -8,7 +8,7 @@ class SearchUser extends StatefulWidget {
 
   final String cuid;
 
-  const SearchUser({Key key, this.cuid}) : super(key: key);
+  const SearchUser({required Key key, this.cuid}) : super(key: key);
 
   @override
   _SearchUserState createState() => _SearchUserState();
@@ -17,7 +17,7 @@ class SearchUser extends StatefulWidget {
 class _SearchUserState extends State<SearchUser> {
 
   TextEditingController searchEditingController = new TextEditingController();
-  QuerySnapshot searchResultSnapshot;
+  QuerySnapshot? searchResultSnapshot;
   bool _isLoading = false;
   bool _hasUserSearched = false;
   Randomizer randomizer = Randomizer.instance();
@@ -46,7 +46,7 @@ class _SearchUserState extends State<SearchUser> {
   }
 
   Widget blogPostsList() {
-    return _hasUserSearched ? (searchResultSnapshot.documents.length == 0) ?
+    return _hasUserSearched ? (searchResultSnapshot.docs.length == 0) ?
     Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
       child: Center(child: Text('No results found...')),
@@ -54,7 +54,7 @@ class _SearchUserState extends State<SearchUser> {
         :
     ListView.builder(
         shrinkWrap: true,
-        itemCount: searchResultSnapshot.documents.length,
+        itemCount: searchResultSnapshot.docs.length,
         itemBuilder: (context, index) {
           return Column(
             children: <Widget>[
@@ -68,10 +68,10 @@ class _SearchUserState extends State<SearchUser> {
                     leading: CircleAvatar(
                       radius: 30.0,
                       backgroundColor: randomizer.randomColor(),
-                      child: Text(searchResultSnapshot.documents[index].data['fullName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                      child: Text(searchResultSnapshot.docs[index].data['fullName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                     ),
                     title: Text(
-                      searchResultSnapshot.documents[index].data['fullName'],
+                      searchResultSnapshot.docs[index].data['fullName'],
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,

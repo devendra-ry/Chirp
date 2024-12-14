@@ -12,7 +12,7 @@ class SearchBlog extends StatefulWidget {
 class _SearchBlogState extends State<SearchBlog> {
 
   TextEditingController searchEditingController = new TextEditingController();
-  QuerySnapshot searchResultSnapshot;
+  QuerySnapshot? searchResultSnapshot;
   bool _isLoading = false;
   bool _hasUserSearched = false;
 
@@ -33,7 +33,7 @@ class _SearchBlogState extends State<SearchBlog> {
   }
 
   Widget blogPostsList() {
-    return _hasUserSearched ? (searchResultSnapshot.documents.length == 0) ?
+    return _hasUserSearched ? (searchResultSnapshot.docs.length == 0) ?
     Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
       child: Center(child: Text('No results found...')),
@@ -41,17 +41,17 @@ class _SearchBlogState extends State<SearchBlog> {
         :
     ListView.builder(
         shrinkWrap: true,
-        itemCount: searchResultSnapshot.documents.length,
+        itemCount: searchResultSnapshot.docs.length,
         itemBuilder: (context, index) {
           return Column(
             children: <Widget>[
               PostTile(
-                  userId: searchResultSnapshot.documents[index].data["userId"],
-                  blogPostId: searchResultSnapshot.documents[index].data['blogPostId'],
-                  blogPostTitle: searchResultSnapshot.documents[index].data['blogPostTitle'],
-                  blogPostContent: searchResultSnapshot.documents[index].data['blogPostContent'],
-                  date: searchResultSnapshot.documents[index].data['date'],
-                  postImage: searchResultSnapshot.documents[index].data['postImage'],
+                  userId: searchResultSnapshot.docs[index].data["userId"],
+                  blogPostId: searchResultSnapshot.docs[index].data['blogPostId'],
+                  blogPostTitle: searchResultSnapshot.docs[index].data['blogPostTitle'],
+                  blogPostContent: searchResultSnapshot.docs[index].data['blogPostContent'],
+                  date: searchResultSnapshot.docs[index].data['date'],
+                  postImage: searchResultSnapshot.docs[index].data['postImage'],
               ),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),

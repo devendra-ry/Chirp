@@ -11,14 +11,14 @@ class DeletePostView extends StatefulWidget {
   final String date;
   final String postImage;
 
-  const DeletePostView({Key key, this.userId, this.blogPostId, this.blogPostTitle, this.blogPostContent, this.date, this.postImage}) : super(key: key);
+  const DeletePostView({required Key key, required this.userId, required this.blogPostId, required this.blogPostTitle, required this.blogPostContent, required this.date, required this.postImage}) : super(key: key);
 
   @override
   _DeletePostViewState createState() => _DeletePostViewState();
 }
 
 class _DeletePostViewState extends State<DeletePostView> {
-  FirebaseUser _user;
+  late User _user;
 
   Randomizer randomizer = Randomizer.instance();
 
@@ -30,7 +30,7 @@ class _DeletePostViewState extends State<DeletePostView> {
   }
 
   _getCurrentUser() async {
-    _user = await FirebaseAuth.instance.currentUser();
+    _user = await FirebaseAuth.instance.currentUser!;
   }
 
   _onDelete() async {
@@ -47,13 +47,13 @@ class _DeletePostViewState extends State<DeletePostView> {
   showAlertDialog(BuildContext context) {
 
     // set up the buttons
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text("Cancel"),
       onPressed:  () {
         Navigator.of(context).pop();
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text("Continue"),
       onPressed:  () {
         _onDelete();
@@ -128,6 +128,5 @@ class _DeletePostViewState extends State<DeletePostView> {
         trailing: Text(widget.date, style: TextStyle(color: Colors.grey, fontSize: 12.0)),
       ),
     );
-
   }
 }

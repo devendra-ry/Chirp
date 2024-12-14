@@ -11,11 +11,11 @@ import 'dart:io';
 import 'ArticlePage.dart';
 
 class EditPost extends StatefulWidget {
-  final String userId;
-  final String userName;
-  final String userEmail;
-  final String blogPostId;
-  final String postImage;
+  final String? userId;
+  final String? userName;
+  final String? userEmail;
+  final String? blogPostId;
+  final String? postImage;
 
   const EditPost({Key key, this.userId, this.blogPostId, this.postImage, this.userName, this.userEmail}) : super(key: key);
   @override
@@ -25,18 +25,18 @@ class EditPost extends StatefulWidget {
 class _EditPostState extends State<EditPost> {
   BlogPost blogPostDetails = new BlogPost();
   bool _isLoading = true;
-  DocumentReference blogPostRef;
-  DocumentSnapshot blogPostSnap;
+  late DocumentReference blogPostRef;
+  late DocumentSnapshot blogPostSnap;
 
   //Text fields
   TextEditingController _titleEditingController = new TextEditingController();
   TextEditingController _contentEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
   String newURL = '';
-  String profileImage;
+  String? profileImage;
 
   @override
   void initState() {
@@ -54,8 +54,7 @@ class _EditPostState extends State<EditPost> {
       });
     });
 
-    blogPostRef =
-        Firestore.instance.collection('blogPosts').document(widget.blogPostId);
+    blogPostRef = FirebaseFirestore.instance.collection('blogPosts').document(widget.blogPostId);
     blogPostSnap = await blogPostRef.get();
     print(blogPostSnap.data);
 
@@ -105,8 +104,8 @@ class _EditPostState extends State<EditPost> {
 
   Future uploadPic() async{
     print('------------------upload function called===============');
-    StorageReference storageReference = FirebaseStorage.instance.ref().child('blogs/${Path.basename(_image.toString())}');
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    Reference storageReference = FirebaseStorage.instance.ref().child('blogs/${Path.basename(_image.toString())}');
+    UploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('---------------File Uploaded-------------------------------');
 
@@ -159,7 +158,7 @@ class _EditPostState extends State<EditPost> {
           SizedBox(
             width: double.infinity,
             height: 50.0,
-            child: RaisedButton(
+            child: ElevatedButton(
                 elevation: 0.0,
                 color: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
@@ -175,7 +174,7 @@ class _EditPostState extends State<EditPost> {
           SizedBox(
             width: double.infinity,
             height: 50.0,
-            child: RaisedButton(
+            child: ElevatedButton(
                 elevation: 0.0,
                 color: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(

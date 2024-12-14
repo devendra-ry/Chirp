@@ -10,7 +10,7 @@ class SearchCategory extends StatefulWidget {
 
 class _SearchCategoryState extends State<SearchCategory> {
   TextEditingController searchEditingController = new TextEditingController();
-  QuerySnapshot searchResultSnapshot;
+  late QuerySnapshot searchResultSnapshot;
   bool _isLoading = false;
   bool _hasUserSearched = false;
 
@@ -31,7 +31,7 @@ class _SearchCategoryState extends State<SearchCategory> {
   }
 
   Widget blogPostsList() {
-    return _hasUserSearched ? (searchResultSnapshot.documents.length == 0) ?
+    return _hasUserSearched ? (searchResultSnapshot.docs.length == 0) ?
     Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
       child: Center(child: Text('No results found...')),
@@ -39,16 +39,16 @@ class _SearchCategoryState extends State<SearchCategory> {
         :
     ListView.builder(
         shrinkWrap: true,
-        itemCount: searchResultSnapshot.documents.length,
+        itemCount: searchResultSnapshot.docs.length,
         itemBuilder: (context, index) {
           return Column(
             children: <Widget>[
               PostTile(
-                  userId: searchResultSnapshot.documents[index].data["userId"],
-                  blogPostId: searchResultSnapshot.documents[index].data['blogPostId'],
-                  blogPostTitle: searchResultSnapshot.documents[index].data['blogPostTitle'],
-                  blogPostContent: searchResultSnapshot.documents[index].data['blogPostContent'],
-                  date: searchResultSnapshot.documents[index].data['date']
+                  userId: searchResultSnapshot.docs[index].data["userId"],
+                  blogPostId: searchResultSnapshot.docs[index].data['blogPostId'],
+                  blogPostTitle: searchResultSnapshot.docs[index].data['blogPostTitle'],
+                  blogPostContent: searchResultSnapshot.docs[index].data['blogPostContent'],
+                  date: searchResultSnapshot.docs[index].data['date']
               ),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),

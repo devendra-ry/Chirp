@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
 
-  final String cuid;
+  final String? cuid;
 
   const SearchPage({Key key, this.cuid}) : super(key: key);
 
@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: Container(
                   height: height * 0.070,
                   margin: EdgeInsets.all(10),
-                  child: RaisedButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => SearchUser(cuid: widget.cuid,)));
@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: Container(
                   height: height * 0.070,
                   margin: EdgeInsets.all(10),
-                  child: RaisedButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => SearchBlog()));
@@ -105,7 +105,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: Container(
                   height: height * 0.070,
                   margin: EdgeInsets.all(10),
-                  child: RaisedButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => Favourites()));

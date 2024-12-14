@@ -12,12 +12,12 @@ class EditPostView extends StatefulWidget {
   final String postImage;
 
   EditPostView({
-    this.userId,
-    this.blogPostId,
-    this.blogPostTitle,
-    this.blogPostContent,
-    this.date,
-    this.postImage,
+    required this.userId,
+    required this.blogPostId,
+    required this.blogPostTitle,
+    required this.blogPostContent,
+    required this.date,
+    required this.postImage,
   });
 
   @override
@@ -25,7 +25,7 @@ class EditPostView extends StatefulWidget {
 }
 
 class _EditPostViewState extends State<EditPostView> {
-  FirebaseUser _user;
+  late User _user;
 
   Randomizer randomizer = Randomizer.instance();
 
@@ -37,7 +37,7 @@ class _EditPostViewState extends State<EditPostView> {
   }
 
   _getCurrentUser() async {
-    _user = await FirebaseAuth.instance.currentUser();
+    _user = await FirebaseAuth.instance.currentUser!;
   }
 
   @override
@@ -75,7 +75,7 @@ class _EditPostViewState extends State<EditPostView> {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30.0,
-          backgroundColor: randomizer.randomColor();
+          backgroundColor: randomizer.randomColor(),
           child: Text(widget.blogPostTitle.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
         ),
         title: Text(
@@ -87,6 +87,5 @@ class _EditPostViewState extends State<EditPostView> {
         trailing: Text(widget.date, style: TextStyle(color: Colors.grey, fontSize: 12.0)),
       ),
     );
-
   }
 }

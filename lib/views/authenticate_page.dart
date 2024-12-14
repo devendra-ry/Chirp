@@ -3,7 +3,7 @@ import 'package:blogging_app/views/signin_page.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {
-  Authenticate({Key key}) : super(key: key);
+  Authenticate({required Key key}) : super(key: key);
 
   @override
   _AuthenticateState createState() => _AuthenticateState();

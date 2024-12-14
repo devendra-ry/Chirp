@@ -109,7 +109,7 @@ class _ResetScreenState extends State<ResetScreen> {
                         SizedBox(
                           width: double.infinity,
                           height: height * 0.072,
-                          child: RaisedButton(
+                          child: TextButton(
                               elevation: 5.0,
                               color: Colors.white,
                               shape: RoundedRectangleBorder(

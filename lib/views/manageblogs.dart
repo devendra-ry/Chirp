@@ -31,7 +31,7 @@ class _ManageBlogsState extends State<ManageBlogs> {
                 child: Container(
                   height: height * 0.070,
                   margin: EdgeInsets.all(10),
-                  child: RaisedButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => EditBlogs()));
@@ -65,7 +65,7 @@ class _ManageBlogsState extends State<ManageBlogs> {
                 child: Container(
                   height: height * 0.070,
                   margin: EdgeInsets.all(10),
-                  child: RaisedButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => DeleteBlogs()));

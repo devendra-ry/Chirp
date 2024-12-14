@@ -7,7 +7,7 @@ class CommentTile extends StatefulWidget {
   final String comment;
   final String date;
 
-  const CommentTile({Key key, this.userName, this.blogPostId, this.comment, this.date}) : super(key: key);
+  const CommentTile({required Key key, required this.userName, required this.blogPostId, required this.comment, required this.date}) : super(key: key);
 
   @override
   _CommentTileState createState() => _CommentTileState();

@@ -3,17 +3,17 @@ import 'package:blogging_app/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class Comments extends StatefulWidget {
-  final String userId;
-  final String blogPostId;
+  final String? userId;
+  final String? blogPostId;
 
-  const Comments({Key key, this.userId, this.blogPostId}) : super(key: key);
+  const Comments({required Key key, this.userId, this.blogPostId}) : super(key: key);
   @override
   _CommentsState createState() => _CommentsState();
 }
 
 class _CommentsState extends State<Comments> {
   //variables
-  Stream _comments;
+  Stream? _comments;
 
   // initState
   @override
@@ -55,18 +55,18 @@ class _CommentsState extends State<Comments> {
       stream: _comments,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data.documents != null &&
-              snapshot.data.documents.length != 0) {
+          if (snapshot.data.docs != null &&
+              snapshot.data.docs.length != 0) {
             return ListView.builder(
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return Column(
                     children: <Widget>[
                       CommentTile(
-                          userName: snapshot.data.documents[index].data['userName'],
-                          blogPostId: snapshot.data.documents[index].data['comID'],
-                          comment : snapshot.data.documents[index].data['comment'],
-                          date: snapshot.data.documents[index].data['date']),
+                          userName: snapshot.data.docs[index].data['userName'],
+                          blogPostId: snapshot.data.docs[index].data['comID'],
+                          comment : snapshot.data.docs[index].data['comment'],
+                          date: snapshot.data.docs[index].data['date']),
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 20.0),
                           child: Divider(height: 0.0)),

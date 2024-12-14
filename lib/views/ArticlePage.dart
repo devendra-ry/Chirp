@@ -8,11 +8,11 @@ import 'package:share/share.dart';
 import 'package:flutter/material.dart';
 
 class ArticlePage extends StatefulWidget {
-  final String userId;
-  final String blogPostId;
-  final String postImage;
+  final String? userId;
+  final String? blogPostId;
+  final String? postImage;
 
-  ArticlePage({Key key, this.userId, this.blogPostId, this.postImage});
+  ArticlePage({required Key key, this.userId, this.blogPostId, this.postImage});
 
   @override
   _ArticlePageState createState() => _ArticlePageState();
@@ -21,13 +21,13 @@ class ArticlePage extends StatefulWidget {
 class _ArticlePageState extends State<ArticlePage> {
   BlogPost blogPostDetails = new BlogPost();
   bool _isLoading = true;
-  bool _isLiked;
-  bool _isdisLiked;
-  bool _isFavourite;
-  DocumentReference blogPostRef;
-  DocumentSnapshot blogPostSnap;
-  String userName;
-  QuerySnapshot userSnap;
+  late bool _isLiked;
+  late bool _isdisLiked;
+  late bool _isFavourite;
+  late DocumentReference blogPostRef;
+  late DocumentSnapshot blogPostSnap;
+  late String userName;
+  late QuerySnapshot userSnap;
 
   @override
   void initState() {
@@ -45,8 +45,7 @@ class _ArticlePageState extends State<ArticlePage> {
       });
     });
 
-    blogPostRef =
-        Firestore.instance.collection('blogPosts').document(widget.blogPostId);
+    blogPostRef = FirebaseFirestore.instance.collection('blogPosts').document(widget.blogPostId);
     blogPostSnap = await blogPostRef.get();
 
     List<dynamic> likedBy = blogPostSnap.data['likedBy'];
@@ -254,7 +253,7 @@ class _ArticlePageState extends State<ArticlePage> {
                     SizedBox(height: 10.0,),
                     Text(blogPostDetails.blogPostContent, textAlign: TextAlign.justify,),
                     SizedBox(height: 5.0,),
-                    RaisedButton(
+                    ElevatedButton(
                         elevation: 5.0,
                         color: Colors.white,
                         shape: RoundedRectangleBorder(

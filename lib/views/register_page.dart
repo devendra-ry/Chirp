@@ -8,7 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'home_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  final Function toggleView;
+  final Function? toggleView;
   RegisterPage({this.toggleView});
 
   @override
@@ -245,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           SizedBox(
                             width: double.infinity,
                             height: height * 0.072,
-                            child: RaisedButton(
+                            child: TextButton(
                                 elevation: 0.0,
                                 color: Colors.white,
                                 shape: RoundedRectangleBorder(

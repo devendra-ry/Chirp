@@ -13,7 +13,7 @@ class SearchUsers extends StatefulWidget {
 class _SearchUsersState extends State<SearchUsers> {
    
   TextEditingController searchEditingController = new TextEditingController();
-  QuerySnapshot searchResultSnapshot;
+  QuerySnapshot? searchResultSnapshot;
   bool _isLoading = false;
   bool _hasUserSearched = false;
 
@@ -36,7 +36,7 @@ class _SearchUsersState extends State<SearchUsers> {
   }
 
   Widget blogPostsList() {
-    return _hasUserSearched ? (searchResultSnapshot.documents.length == 0) ? 
+    return _hasUserSearched ? (searchResultSnapshot.docs.length == 0) ?
     Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
       child: Center(child: Text('No results found...')),
@@ -44,13 +44,13 @@ class _SearchUsersState extends State<SearchUsers> {
     : 
     ListView.builder(
       shrinkWrap: true,
-      itemCount: searchResultSnapshot.documents.length,
+      itemCount: searchResultSnapshot.docs.length,
       itemBuilder: (context, index) {
         return Column(
           children: <Widget>[
             InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserDetailsPage(userId: searchResultSnapshot.documents[index].data['userId'], fullName: searchResultSnapshot.documents[index].data['fullName'], email: searchResultSnapshot.documents[index].data['email'],)));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserDetailsPage(userId: searchResultSnapshot.docs[index].data['userId'], fullName: searchResultSnapshot.docs[index].data['fullName'], email: searchResultSnapshot.docs[index].data['email'],)));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
@@ -58,10 +58,10 @@ class _SearchUsersState extends State<SearchUsers> {
                   leading: CircleAvatar(
                     radius: 30.0,
                     backgroundColor: randomizer.randomColor(),
-                    child: Text(searchResultSnapshot.documents[index].data['fullName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+                    child: Text(searchResultSnapshot.docs[index].data['fullName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
                   ),
                   title: Text(
-                    searchResultSnapshot.documents[index].data['fullName'],
+                    searchResultSnapshot.docs[index].data['fullName'],
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,

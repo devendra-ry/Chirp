@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:randomizer_null_safe/randomizer_null_safe.dart';
 
 class UserDetailsPage extends StatefulWidget {
-  final String cuid;
-  final String userId;
-  final String fullName;
-  final String email;
+  final String? cuid;
+  final String? userId;
+  final String? fullName;
+  final String? email;
 
   UserDetailsPage({this.userId, this.fullName, this.email, this.cuid});
 
@@ -17,7 +17,7 @@ class UserDetailsPage extends StatefulWidget {
 
 class _UserDetailsPageState extends State<UserDetailsPage> {
 
-  QuerySnapshot userSnap;
+  QuerySnapshot? userSnap;
 
   @override
   void initState() {
@@ -84,7 +84,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                       child: Container(
                         height: height * 0.070,
                         margin: EdgeInsets.all(5),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             _follow();
                           },
@@ -117,7 +117,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                       child: Container(
                         height: height * 0.070,
                         margin: EdgeInsets.all(5),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             _unfollow();
                           },

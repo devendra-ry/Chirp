@@ -10,14 +10,14 @@ class PostTile extends StatefulWidget {
   final String blogPostTitle;
   final String blogPostContent;
   final String date;
-  final String postImage;
+  final String? postImage;
 
   PostTile({
-    this.userId,
-    this.blogPostId,
-    this.blogPostTitle,
-    this.blogPostContent,
-    this.date,
+    required this.userId,
+    required this.blogPostId,
+    required this.blogPostTitle,
+    required this.blogPostContent,
+    required this.date,
     this.postImage,
   });
 
@@ -27,7 +27,7 @@ class PostTile extends StatefulWidget {
 
 class _PostTileState extends State<PostTile> {
 
-  FirebaseUser _user;
+  late User _user;
   Randomizer randomizer = Randomizer.instance();
 
   // initState
@@ -38,7 +38,7 @@ class _PostTileState extends State<PostTile> {
   }
 
   _getCurrentUser() async {
-    _user = await FirebaseAuth.instance.currentUser();
+    _user = await FirebaseAuth.instance.currentUser!;
   }
 
   @override
@@ -89,6 +89,5 @@ class _PostTileState extends State<PostTile> {
           trailing: Text(widget.date, style: TextStyle(color: Colors.grey, fontSize: 12.0)),
         ),
       );
-
   }
 }

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BlogPostPage extends StatefulWidget {
-  final String userId;
-  final String blogPostId;
+  final String? userId;
+  final String? blogPostId;
 
   BlogPostPage({this.userId, this.blogPostId});
 
@@ -17,9 +17,9 @@ class BlogPostPage extends StatefulWidget {
 class _BlogPostPageState extends State<BlogPostPage> {
   BlogPost blogPostDetails = new BlogPost();
   bool _isLoading = true;
-  bool _isLiked;
-  DocumentReference blogPostRef;
-  DocumentSnapshot blogPostSnap;
+  late bool _isLiked;
+  late DocumentReference blogPostRef;
+  late DocumentSnapshot blogPostSnap;
 
   @override
   void initState() {
@@ -37,8 +37,7 @@ class _BlogPostPageState extends State<BlogPostPage> {
       });
     });
 
-    blogPostRef =
-        Firestore.instance.collection('blogPosts').document(widget.blogPostId);
+    blogPostRef = FirebaseFirestore.instance.collection('blogPosts').document(widget.blogPostId);
     blogPostSnap = await blogPostRef.get();
 
     List<dynamic> likedBy = blogPostSnap.data['likedBy'];

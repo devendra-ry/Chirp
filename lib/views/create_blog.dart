@@ -10,9 +10,9 @@ import 'ArticlePage.dart';
 
 class CreateBlogPage extends StatefulWidget {
   //variables
-  final String uid;
-  final String userName;
-  final String userEmail;
+  final String? uid;
+  final String? userName;
+  final String? userEmail;
 
   CreateBlogPage({this.uid, this.userName, this.userEmail});
 
@@ -31,10 +31,10 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
   bool _isLoading = false;
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
   String newURL = 'https://t4.ftcdn.net/jpg/00/89/55/15/240_F_89551596_LdHAZRwz3i4EM4J0NHNHy2hEUYDfXc0j.jpg';
-  String profileImage;
+  String? profileImage;
 
   //save data to firestore
   _onPublish() async {
@@ -74,8 +74,8 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
   Future uploadPic() async{
     print('------------------upload function called===============');
-    StorageReference storageReference = FirebaseStorage.instance.ref().child('blogs/${Path.basename(_image.toString())}');
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    Reference storageReference = FirebaseStorage.instance.ref().child('blogs/${Path.basename(_image.toString())}');
+    UploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('---------------File Uploaded-------------------------------');
 
@@ -153,7 +153,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                   SizedBox(
                     width: double.infinity,
                     height: 50.0,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                         elevation: 0.0,
                         color: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
@@ -169,7 +169,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                   SizedBox(
                     width: double.infinity,
                     height: 50.0,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                         elevation: 0.0,
                         color: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(

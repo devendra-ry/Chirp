@@ -8,13 +8,13 @@ class ProfilePage extends StatefulWidget {
   final String uid;
   final String userEmail;
   final String visitedUserId;
-  ProfilePage({Key key, this.uid, this.userEmail, this.visitedUserId});
+  ProfilePage({required Key key, required this.uid, required this.userEmail, required this.visitedUserId});
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  QuerySnapshot userSnap;
+  late QuerySnapshot userSnap;
   bool _isLoading = true;
 
 
@@ -88,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.only(left: 28.0,top:7),
                       child: CircleAvatar(
                         radius: 40,
-                        backgroundImage: NetworkImage(userSnap.documents[0].data['profileImage'].toString()),
+                        backgroundImage: NetworkImage(userSnap.docs[0].data['profileImage'].toString()),
                       ),
                     ),
                     Padding(
@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            userSnap.documents[0].data['fullName'].toString(),
+                            userSnap.docs[0].data['fullName'].toString(),
                             style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 28,
@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.black,size:17),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: (userSnap.documents[0].data['location'] != null)?Text(userSnap.documents[0].data['location'].toString(),style: TextStyle(
+                                  child: (userSnap.docs[0].data['location'] != null)?Text(userSnap.docs[0].data['location'].toString(),style: TextStyle(
                                     color: Colors.black,
                                   ),):Text('Not Provided',style: TextStyle(
                                     color: Colors.black,
@@ -154,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: Text('${userSnap.documents[0].data['posts'].length}',style: TextStyle(
+                                    child: Text('${userSnap.docs[0].data['posts'].length}',style: TextStyle(
                                       fontSize: 30.0,
                                     ),),
                                   ),
@@ -176,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: Text('${userSnap.documents[0].data['totalLikes'].length}',style: TextStyle(
+                                    child: Text('${userSnap.docs[0].data['totalLikes'].length}',style: TextStyle(
                                       fontSize: 30.0,
                                     ),),
                                   ),
@@ -198,7 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: Text('${userSnap.documents[0].data['totalDisLikes'].length}',style: TextStyle(
+                                    child: Text('${userSnap.docs[0].data['totalDisLikes'].length}',style: TextStyle(
                                       fontSize: 30.0,
                                     ),),
                                   ),
@@ -220,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: Text('${userSnap.documents[0].data['followers'].length}',style: TextStyle(
+                                    child: Text('${userSnap.docs[0].data['followers'].length}',style: TextStyle(
                                       fontSize: 30.0,
                                     ),),
                                   ),

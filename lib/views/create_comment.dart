@@ -2,9 +2,9 @@ import 'package:blogging_app/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class CreateComment extends StatefulWidget {
-  final String userId;
-  final String userName;
-  final String blogPostId;
+  final String? userId;
+  final String? userName;
+  final String? blogPostId;
   CreateComment({Key key, this.userId, this.blogPostId, this.userName});
   @override
   _CreateCommentState createState() => _CreateCommentState();
@@ -60,7 +60,7 @@ class _CreateCommentState extends State<CreateComment> {
                   SizedBox(
                     width: double.infinity,
                     height: height * 0.072,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                         elevation: 5.0,
                         color: Colors.white,
                         shape: RoundedRectangleBorder(

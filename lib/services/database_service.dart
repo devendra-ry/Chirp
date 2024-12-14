@@ -4,20 +4,18 @@ import 'package:intl/intl.dart';
 
 class DatabaseService {
   //unique id if the document stored in collection
-  final String uid;
+  final String? uid;
   DatabaseService({this.uid});
 
   //get the reference of collection users in the database
-  final CollectionReference userCollection =
-      Firestore.instance.collection('users');
 
   //get the reference of collection blogs in the database
   final CollectionReference blogCollection =
-  Firestore.instance.collection('blogPosts');
+  FirebaseFirestore.instance.collection('blogPosts');
 
   //get the reference of collection comments in the database
   final CollectionReference commentCollection =
-  Firestore.instance.collection('comments');
+  FirebaseFirestore.instance.collection('comments');
 
   // create user data
   Future createUserData(String fullName, String email, String password) async {
@@ -71,7 +69,7 @@ class DatabaseService {
     DocumentReference userRef = userCollection.document(uid);
 
     DocumentReference blogPostsRef =
-        await Firestore.instance.collection('blogPosts').add({
+        await FirebaseFirestore.instance.collection('blogPosts').add({
       'userId': uid,
       'blogPostId': '',
       'blogPostTitle': title,
@@ -126,7 +124,7 @@ class DatabaseService {
   // get user blog posts
   getUserBlogPosts() async {
     // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('blogPosts')
         .where('userId', isEqualTo: uid)
         .orderBy('createdAt', descending: true)
@@ -135,16 +133,16 @@ class DatabaseService {
 
   // get blog post details
   Future getBlogPostDetails(String blogPostId) async {
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('blogPosts')
         .where('blogPostId', isEqualTo: blogPostId)
         .getDocuments();
     BlogPost blogPostDetails = new BlogPost(
-      blogPostTitle: snapshot.documents[0].data['blogPostTitle'],
-      blogPostAuthor: snapshot.documents[0].data['blogPostAuthor'],
-      blogPostAuthorEmail: snapshot.documents[0].data['blogPostAuthorEmail'],
-      blogPostContent: snapshot.documents[0].data['blogPostContent'],
-      date: snapshot.documents[0].data['date'],
+      blogPostTitle: snapshot.docs[0].data['blogPostTitle'],
+      blogPostAuthor: snapshot.docs[0].data['blogPostAuthor'],
+      blogPostAuthorEmail: snapshot.docs[0].data['blogPostAuthorEmail'],
+      blogPostContent: snapshot.docs[0].data['blogPostContent'],
+      date: snapshot.docs[0].data['date'],
     );
 
     return blogPostDetails;
@@ -153,7 +151,7 @@ class DatabaseService {
   // search blogposts
   searchBlogPostsByName(String blogPostName) async {
     List<String> searchList = blogPostName.toLowerCase().split(" ");
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('blogPosts')
         .where('blogPostTitleArray', arrayContainsAny: searchList)
         .getDocuments();
@@ -165,7 +163,7 @@ class DatabaseService {
   //search blogposts by category
   searchBlogPostsByCategory(String category) async {
     List<String> searchList = category.toLowerCase().split(" ");
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('blogPosts')
         .where('categoryArray', arrayContainsAny: searchList)
         .getDocuments();
@@ -177,11 +175,11 @@ class DatabaseService {
   // search users by name
   searchUsersByName(String userName) async {
     List<String> searchList = userName.toLowerCase().split(" ");
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('users')
         .where('fullNameArray', arrayContainsAny: searchList)
         .getDocuments();
-    print(snapshot.documents.length);
+    print(snapshot.docs.length);
 
     return snapshot;
   }
@@ -192,7 +190,7 @@ class DatabaseService {
     DocumentSnapshot userSnap = await userRef.get();
 
     DocumentReference blogPostRef =
-        Firestore.instance.collection('blogPosts').document(blogPostId);
+    FirebaseFirestore.instance.collection('blogPosts').document(blogPostId);
 
     List<dynamic> likedPosts = await userSnap.data['likedPosts'];
 
@@ -221,7 +219,7 @@ class DatabaseService {
     DocumentSnapshot userSnap = await userRef.get();
 
     DocumentReference blogPostRef =
-    Firestore.instance.collection('blogPosts').document(blogPostId);
+    FirebaseFirestore.instance.collection('blogPosts').document(blogPostId);
 
     List<dynamic> dislikedPosts = await userSnap.data['dislikedPosts'];
 
@@ -286,7 +284,7 @@ class DatabaseService {
   // get user blogposts
   getTopBlogPosts() async {
     // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('blogPosts')
         .orderBy('likedBy', descending: true)
         .snapshots();
@@ -295,7 +293,7 @@ class DatabaseService {
   //get liked blogposts
   getLikedBlogPosts() async {
     // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('blogPosts')
         .where('favourite', isEqualTo: true).orderBy('createdAt', descending: true)
         .snapshots();
@@ -333,7 +331,7 @@ class DatabaseService {
 
   //get comments
   Future getComments(String id) async {
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('comments')
         .where('comID', isEqualTo: id)
         .orderBy('createdAt', descending: true)

@@ -10,7 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignInPage extends StatefulWidget {
-  final Function toggleView;
+  final Function? toggleView;
   SignInPage({this.toggleView});
 
   @override
@@ -61,7 +61,7 @@ class _SignInPageState extends State<SignInPage> {
           await Helper.saveUserEmailSharedPreference(
               _emailEditingController.text);
           await Helper.saveUserNameSharedPreference(
-              userInfo.documents[0].data['fullName']);
+              userInfo.docs[0].data['fullName']);
           //Navigate to HomePage after login
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => HomePage()));
@@ -188,7 +188,7 @@ class _SignInPageState extends State<SignInPage> {
                               : null,
                           obscureText: !_passwordVisible,
                         ),
-                        FlatButton(
+                        TextButton(
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => ResetScreen()),

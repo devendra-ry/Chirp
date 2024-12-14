@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
-  final String uid;
-  final String userEmail;
+  final String? uid;
+  final String? userEmail;
 
   EditProfilePage({this.uid, this.userEmail});
   @override
@@ -18,15 +18,15 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  QuerySnapshot userSnap;
+  QuerySnapshot? userSnap;
   bool _isLoading = true;
   String _error = '';
   TextEditingController _fullNameEditingController = new TextEditingController();
   TextEditingController _location = new TextEditingController();
-  File _image;
+  File? _image;
   final picker = ImagePicker();
   String newURL = 'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
-  String profileImage;
+  String? profileImage;
 
   @override
   void initState() {
@@ -58,9 +58,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         userSnap = res;
         //newURL = userSnap.documents[0].data['profileImage'].toString();
-        _fullNameEditingController.text = userSnap.documents[0].data['fullName'].toString();
-        _location.text = userSnap.documents[0].data['location'].toString();
-        profileImage = userSnap.documents[0].data['profileImage'].toString();
+        _fullNameEditingController.text = userSnap.docs[0].data['fullName'].toString();
+        _location.text = userSnap.docs[0].data['location'].toString();
+        profileImage = userSnap.docs[0].data['profileImage'].toString();
         _isLoading = false;
       });
     } );
@@ -80,8 +80,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future uploadPic() async{
     print('------------------upload function called===============');
-    StorageReference storageReference = FirebaseStorage.instance.ref().child('profiles/${Path.basename(_image.toString())}');
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    Reference storageReference = FirebaseStorage.instance.ref().child('profiles/${Path.basename(_image.toString())}');
+    UploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('---------------File Uploaded-------------------------------');
 
@@ -188,7 +188,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     labelText: 'Full Name',
                     labelStyle: TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: userSnap.documents[0].data['fullName'].toString(),
+                    hintText: userSnap.docs[0].data['fullName'].toString(),
                     hintStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     labelText: 'Location',
                     labelStyle: TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: (userSnap.documents[0].data['location'] != null)?userSnap.documents[0].data['location'].toString():'',
+                    hintText: (userSnap.docs[0].data['location'] != null)?userSnap.docs[0].data['location'].toString():'',
                     hintStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child: Container(
                       height: height * 0.070,
                       margin: EdgeInsets.all(10),
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -264,7 +264,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child: Container(
                       height: height * 0.070,
                       margin: EdgeInsets.all(10),
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           _updateDetails();
                         },
