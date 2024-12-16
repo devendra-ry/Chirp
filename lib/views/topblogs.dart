@@ -7,23 +7,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class TopBlogs extends StatefulWidget {
+  const TopBlogs({Key? key}) : super(key: key);
+
   @override
   _TopBlogsState createState() => _TopBlogsState();
 }
 
 class _TopBlogsState extends State<TopBlogs> {
+  // Get the info about logged in user
+  final AuthService _authService = AuthService();
 
-  //get the info about logged in user
-  final AuthService _authService = new AuthService();
-
-  //variables
-  late User _user;
+  // Variables
+  User? _user;
   QuerySnapshot? userSnap;
   String _userName = '';
   String _userEmail = '';
   Stream? _blogPosts;
   String profilePic = '';
-  String defaultPic =
+  final String defaultPic =
       'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
 
   // initState
@@ -34,48 +35,47 @@ class _TopBlogsState extends State<TopBlogs> {
   }
 
   _getBlogPosts() async {
-    //get the current user
-    _user = await FirebaseAuth.instance.currentUser();
-    //get the name of the user stored locally
-    await Helper.getUserNameSharedPreference().then((value) {
-      setState(() {
-        _userName = value;
-      });
-    });
-    //get the email of the user stored locally
-    await Helper.getUserEmailSharedPreference().then((value) {
-      setState(() {
-        _userEmail = value;
-      });
-    });
-    //get the blogs of the user
-    DatabaseService(uid: _user.uid).getTopBlogPosts().then((snapshots) {
-      setState(() {
-        _blogPosts = snapshots;
-      });
-    });
-    //get user data
-    await DatabaseService(uid: _user.uid).getUserDataID(_user.uid).then((res) {
-      setState(() {
-        userSnap = res;
-        profilePic = userSnap.docs[0].data['profileImage'].toString();
-      });
-    });
+    // Get the current user
+    _user = FirebaseAuth.instance.currentUser;
+
+    if (_user != null) {
+      // Get the name of the user stored locally
+      _userName = await Helper.getUserNameSharedPreference() ?? '';
+
+      // Get the email of the user stored locally
+      _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
+
+      // Get the top blog posts
+      _blogPosts = DatabaseService().getTopBlogPosts();
+
+      // Get user data
+      userSnap = await DatabaseService(uid: _user!.uid).getUserDataID(_user!.uid);
+      profilePic =
+          (userSnap!.docs[0].data() as Map<String, dynamic>)['profileImage'] ??
+              defaultPic;
+    } else {
+      // Handle the case where the user is not logged in
+      print("User is not logged in.");
+    }
+
+    setState(() {}); // Update the UI after fetching data
   }
 
   Widget noBlogPostWidget() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 20.0),
           Center(
             child: Text(
-              "No blogs",style: TextStyle(
-              fontSize: 30.0,
-            ),),
+              "No blogs",
+              style: TextStyle(
+                fontSize: 30.0,
+              ),
+            ),
           ),
         ],
       ),
@@ -85,31 +85,34 @@ class _TopBlogsState extends State<TopBlogs> {
   Widget blogPostsList() {
     return StreamBuilder(
       stream: _blogPosts,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data.docs != null &&
-              snapshot.data.docs.length != 0) {
+          if (snapshot.data.docs != null && snapshot.data.docs.length != 0) {
             return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      PostTile(
-                          userId: _user.uid,
-                          blogPostId:
-                          snapshot.data.docs[index].data['blogPostId'],
-                          blogPostTitle: snapshot
-                              .data.docs[index].data['blogPostTitle'],
-                          blogPostContent: snapshot
-                              .data.docs[index].data['blogPostContent'],
-                          date: snapshot.data.docs[index].data['date'],
-                          postImage: (snapshot.data.docs[index].data['postImage'] != null)? snapshot.data.docs[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
-                      Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Divider(height: 0.0)),
-                    ],
-                  );
-                });
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> data =
+                snapshot.data.docs[index].data() as Map<String, dynamic>;
+                return Column(
+                  children: <Widget>[
+                    // Assuming you have a PostTile widget similar to the one in HomePage
+                    PostTile(
+                      userId: data['userId'], // Pass userId from the post data
+                      blogPostId: data['blogPostId'],
+                      blogPostTitle: data['blogPostTitle'],
+                      blogPostContent: data['blogPostContent'],
+                      date: data['date'],
+                      postImage: data['postImage'] ??
+                          'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png',
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Divider(height: 0.0),
+                    ),
+                  ],
+                );
+              },
+            );
           } else {
             return noBlogPostWidget();
           }
@@ -123,12 +126,14 @@ class _TopBlogsState extends State<TopBlogs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
           'Top Blogs',
-          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
+          style: TextStyle(fontFamily: 'OpenSans', color: Colors.white),
         ),
       ),
       body: blogPostsList(),

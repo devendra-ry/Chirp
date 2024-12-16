@@ -7,114 +7,119 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Favourites extends StatefulWidget {
+  const Favourites({Key? key}) : super(key: key);
+
   @override
   _FavouritesState createState() => _FavouritesState();
 }
 
 class _FavouritesState extends State<Favourites> {
-  final AuthService _authService = new AuthService();
+  final AuthService _authService = AuthService();
 
-  //variables
+  // Variables
   User? _user;
   QuerySnapshot? userSnap;
   String _userName = '';
   String _userEmail = '';
-  Stream? _blogPosts;
+  Stream<QuerySnapshot>? _blogPosts;
   String profilePic = '';
-  String defaultPic =
+  static const String defaultPic =
       'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
 
-  // initState
   @override
   void initState() {
     super.initState();
     _getBlogPosts();
   }
 
-  _getBlogPosts() async {
-    //get the current user
-    _user = await FirebaseAuth.instance.currentUser!;
-    //get the name of the user! stored locally
-    await Helper.getUserNameSharedPreference().then((value) {
-      setState(() {
-        _userName = value!;
-      });
-    });
-    //get the email of the user stored locally
-    await Helper.getUserEmailSharedPreference().then((value) {
-      setState(() {
-        _userEmail = value!;
-      });
-    });
-    //get the blogs of the user
-    DatabaseService(uid: _user.uid).getLikedBlogPosts().then((snapshots) {
-      setState(() {
-        _blogPosts = snapshots;
-      });
-    });
-    //get user data
-    await DatabaseService(uid: _user.uid).getUserDataID(_user.uid).then((res) {
-      setState(() {
-        userSnap = res;
-        profilePic = userSnap.docs[0].data['profileImage'].toString();
-      });
-    });
+  Future<void> _getBlogPosts() async {
+    // Get the current user
+    _user = FirebaseAuth.instance.currentUser;
+    if (_user != null) {
+      try {
+        // Get the name of the user stored locally
+        _userName = await Helper.getUserNameSharedPreference() ?? '';
+
+        // Get the email of the user stored locally
+        _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
+
+        // Get the blogs of the user
+        _blogPosts = DatabaseService(uid: _user!.uid).getFavouriteBlogPosts();
+
+        // Get user data
+        userSnap = await DatabaseService(uid: _user!.uid).getUserDataID(_user!.uid);
+
+        profilePic = (userSnap!.docs[0].data() as Map<String, dynamic>)['profileImage'] as String? ?? defaultPic;
+
+        // Trigger a rebuild to show the updated data
+        if (mounted) setState(() {});
+      } catch (e) {
+        // Handle any errors that might occur during data fetching
+        print('Error fetching user data: $e');
+      }
+    } else {
+      // Handle the case where the user is not logged in
+      print("User not logged in.");
+      // You might want to redirect to a login screen or handle it differently
+    }
   }
 
-  Widget noBlogPostWidget() {
+  Widget _noBlogPostWidget() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 20.0),
           Center(
             child: Text(
-                "No favourites yet",style: TextStyle(
-              fontSize: 30.0,
-
-            ),),
+              "No favourites yet",
+              style: TextStyle(
+                fontSize: 30.0,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget blogPostsList() {
-    return StreamBuilder(
+  Widget _blogPostsList() {
+    return StreamBuilder<QuerySnapshot>(
       stream: _blogPosts,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data.docs != null &&
-              snapshot.data.docs.length != 0) {
-            return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      PostTile(
-                          userId: _user.uid,
-                          blogPostId:
-                          snapshot.data.docs[index].data['blogPostId'],
-                          blogPostTitle: snapshot
-                              .data.docs[index].data['blogPostTitle'],
-                          blogPostContent: snapshot
-                              .data.docs[index].data['blogPostContent'],
-                          date: snapshot.data.docs[index].data['date'],
-                          postImage: (snapshot.data.docs[index].data['postImage'] != null)? snapshot.data.docs[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
-                      Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Divider(height: 0.0)),
-                    ],
-                  );
-                });
-          } else {
-            return noBlogPostWidget();
-          }
-        } else {
-          return noBlogPostWidget();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return _noBlogPostWidget();
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            final data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+            return Column(
+              children: <Widget>[
+                PostTile(
+                  userId: _user!.uid,
+                  blogPostId: data['blogPostId'],
+                  blogPostTitle: data['blogPostTitle'],
+                  blogPostContent: data['blogPostContent'],
+                  date: data['date'],
+                  postImage: data['postImage'] ??
+                      'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png',
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: const Divider(height: 0.0),
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
@@ -122,13 +127,16 @@ class _FavouritesState extends State<Favourites> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text(
+        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
           'Favourite Blogs',
-          style: TextStyle(fontFamily: 'OpenSans'),
+          style: TextStyle(fontFamily: 'OpenSans', color: Colors.white),
         ),
       ),
-      body: blogPostsList(),
+      body: _blogPostsList(),
     );
   }
 }

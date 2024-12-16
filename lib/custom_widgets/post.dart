@@ -10,7 +10,7 @@ class PostTile extends StatefulWidget {
   final String blogPostTitle;
   final String blogPostContent;
   final String date;
-  final String? postImage;
+  final String postImage;
 
   PostTile({
     required this.userId,
