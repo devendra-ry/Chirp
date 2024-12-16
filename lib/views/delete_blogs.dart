@@ -1,6 +1,4 @@
 import 'package:blogging_app/custom_widgets/delete_post_list.dart';
-import 'package:blogging_app/custom_widgets/edit_post_list.dart';
-import 'package:blogging_app/custom_widgets/post.dart';
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
@@ -15,14 +13,14 @@ class DeleteBlogs extends StatefulWidget {
 
 class _DeleteBlogsState extends State<DeleteBlogs> {
   //get the info about logged in user
-  final AuthService _authService = new AuthService();
+  final AuthService _authService = AuthService(); // No need for `new`
 
   //variables
-  late User _user;
-  late QuerySnapshot userSnap;
-  String _userName = '';
-  String _userEmail = '';
-  late Stream _blogPosts;
+  User? _user; // Made nullable
+  QuerySnapshot? userSnap; // Made nullable
+  String? _userName; // Made nullable
+  String? _userEmail; // Made nullable
+  Stream? _blogPosts;
   String profilePic = '';
   String defaultPic =
       'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
@@ -36,40 +34,50 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
 
   _getBlogPosts() async {
     //get the current user
-    _user = await FirebaseAuth.instance.currentUser!;
-    //get the name of the user stored locally
-    await Helper.getUserNameSharedPreference().then((value) {
-      setState(() {
-        _userName = value;
+    _user = FirebaseAuth.instance.currentUser;
+    if (_user != null) {
+      // Check if user is not null
+      //get the name of the user stored locally
+      await Helper.getUserNameSharedPreference().then((value) {
+        setState(() {
+          _userName = value;
+        });
       });
-    });
-    //get the email of the user stored locally
-    await Helper.getUserEmailSharedPreference().then((value) {
-      setState(() {
-        _userEmail = value;
+      //get the email of the user stored locally
+      await Helper.getUserEmailSharedPreference().then((value) {
+        setState(() {
+          _userEmail = value;
+        });
       });
-    });
-    //get the blogs of the user
-    DatabaseService(uid: _user.uid).getUserBlogPosts().then((snapshots) {
-      setState(() {
-        _blogPosts = snapshots;
+      //get the blogs of the user
+      DatabaseService(uid: _user!.uid)
+          .getUserBlogPosts()
+          .then((snapshots) { // Use null-aware operator
+        setState(() {
+          _blogPosts = snapshots;
+        });
       });
-    });
+    } else {
+      // Handle the case where the user is not logged in
+      print("User is not logged in.");
+    }
   }
 
   Widget noBlogPostWidget() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 20.0),
           Center(
             child: Text(
-              "No blogs",style: TextStyle(
-              fontSize: 30.0,
-            ),),
+              "No blogs",
+              style: TextStyle(
+                fontSize: 30.0,
+              ),
+            ),
           ),
         ],
       ),
@@ -79,31 +87,35 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
   Widget blogPostsList() {
     return StreamBuilder(
       stream: _blogPosts,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot snapshot) {
+        // Use AsyncSnapshot
         if (snapshot.hasData) {
-          if (snapshot.data.docs != null &&
-              snapshot.data.docs.length != 0) {
+          if (snapshot.data.docs != null && snapshot.data.docs.length != 0) {
             return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      DeletePostView(
-                          userId: _user.uid,
-                          blogPostId:
-                          snapshot.data.docs[index].data['blogPostId'],
-                          blogPostTitle: snapshot
-                              .data.docs[index].data['blogPostTitle'],
-                          blogPostContent: snapshot
-                              .data.docs[index].data['blogPostContent'],
-                          date: snapshot.data.docs[index].data['date'],
-                          postImage: (snapshot.data.docs[index].data['postImage'] != null)? snapshot.data.documents[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
-                      Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Divider(height: 0.0)),
-                    ],
-                  );
-                });
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                // Access data safely
+                Map<String, dynamic> data =
+                snapshot.data.docs[index].data() as Map<String, dynamic>;
+                return Column(
+                  children: <Widget>[
+                    DeletePostView(
+                      userId: _user!.uid, // Use null-aware operator
+                      blogPostId: data['blogPostId'],
+                      blogPostTitle: data['blogPostTitle'],
+                      blogPostContent: data['blogPostContent'],
+                      date: data['date'],
+                      postImage: data['postImage'] ??
+                          'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png',
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Divider(height: 0.0),
+                    ),
+                  ],
+                );
+              },
+            );
           } else {
             return noBlogPostWidget();
           }
@@ -117,12 +129,14 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
           'Delete Blogs',
-          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
+          style: TextStyle(fontFamily: 'OpenSans', color: Colors.white),
         ),
       ),
       body: blogPostsList(),

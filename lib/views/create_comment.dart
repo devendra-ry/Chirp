@@ -5,7 +5,10 @@ class CreateComment extends StatefulWidget {
   final String? userId;
   final String? userName;
   final String? blogPostId;
-  CreateComment({Key key, this.userId, this.blogPostId, this.userName});
+
+  const CreateComment({Key? key, this.userId, this.blogPostId, this.userName})
+      : super(key: key);
+
   @override
   _CreateCommentState createState() => _CreateCommentState();
 }
@@ -13,19 +16,28 @@ class CreateComment extends StatefulWidget {
 class _CreateCommentState extends State<CreateComment> {
   final _formKey = GlobalKey<FormState>();
   String _error = '';
-  TextEditingController _commentEditingController = new TextEditingController();
+  final TextEditingController _commentEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.grey[200],
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'Add Comment',
+          style: TextStyle(fontFamily: 'OpenSans', color: Colors.white),
+        ),
+      ),
       body: Form(
         key: _formKey,
         child: Container(
           child: ListView(
-            padding:
-            EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0),
             children: <Widget>[
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -33,27 +45,28 @@ class _CreateCommentState extends State<CreateComment> {
                 children: [
                   SizedBox(height: height * 0.05),
                   TextFormField(
-                    decoration: new InputDecoration(
-                      prefixIcon: Icon(Icons.comment),
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.comment),
                       fillColor: Colors.white,
-                      border: new OutlineInputBorder(
-                        borderRadius: new BorderRadius.circular(25.0),
-                        borderSide: new BorderSide(
-                        ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(),
                       ),
+                      hintText: "Enter your comment here",
                       //fillColor: Colors.green
                     ),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.blue,
                       fontFamily: 'OpenSans',
                     ),
                     controller: _commentEditingController,
                     validator: (val) {
-                      return RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(val)
-                          ? null
-                          : "Please enter a valid comment";
+                      // Simplified validation - check if it's not empty
+                      if (val == null || val.isEmpty) {
+                        return "Please enter a comment";
+                      }
+                      return null;
                     },
                   ),
                   SizedBox(height: height * 0.05),
@@ -61,29 +74,40 @@ class _CreateCommentState extends State<CreateComment> {
                     width: double.infinity,
                     height: height * 0.072,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
                         elevation: 5.0,
-                        color: Colors.white,
+                        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        child: Text(
-                          'Comment',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'OpenSans',
-                          ),
+                      ),
+                      child: const Text(
+                        'Comment',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'OpenSans',
                         ),
-                        onPressed: () async{
-                              await DatabaseService(uid: widget.userId).saveComment(widget.userId,widget.userName, widget.blogPostId, _commentEditingController.text).then((value) => Navigator.of(context).pop());
-                              print(widget.blogPostId);
-                        }),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          // Check if form is valid
+                          await DatabaseService(uid: widget.userId)
+                              .saveComment(
+                              widget.userId,
+                              widget.userName,
+                              widget.blogPostId,
+                              _commentEditingController.text)
+                              .then((value) => Navigator.of(context).pop());
+                        }
+                      },
+                    ),
                   ),
                   SizedBox(height: height * 0.04),
                   Text(
                     _error,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 14.0,
                       fontFamily: 'OpenSans',

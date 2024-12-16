@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as Path;
 import 'package:blogging_app/services/database_service.dart';
 import 'package:blogging_app/shared/loading.dart';
@@ -12,7 +11,8 @@ class EditProfilePage extends StatefulWidget {
   final String? uid;
   final String? userEmail;
 
-  EditProfilePage({this.uid, this.userEmail});
+  const EditProfilePage({Key? key, this.uid, this.userEmail}) : super(key: key);
+
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
@@ -21,10 +21,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   QuerySnapshot? userSnap;
   bool _isLoading = true;
   String _error = '';
-  TextEditingController _fullNameEditingController = new TextEditingController();
-  TextEditingController _location = new TextEditingController();
+
+  final TextEditingController _fullNameEditingController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+
   File? _image;
   final picker = ImagePicker();
+
   String newURL = 'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
   String? profileImage;
 
@@ -34,94 +37,130 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _getUserDetails();
   }
 
-  _updateDetails() async{
-    if (_fullNameEditingController.text != '' || _location.text != '' || newURL != ''){
-      await DatabaseService(uid: widget.uid).updateUserData(_fullNameEditingController.text,_location.text, newURL).then((res) {
-        setState(() {
-          if (res!= null) {
-            _isLoading = true;
-            Navigator.of(context).pop();
-          }
-          else {
-            setState(() {
-              _error = 'Error Updating';
-              _isLoading = false;
-            });
-          }
-        });
-      } );
+  @override
+  void dispose() {
+    _fullNameEditingController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _updateDetails() async {
+    try {
+      if (_fullNameEditingController.text.trim().isNotEmpty ||
+          _locationController.text.trim().isNotEmpty ||
+          newURL.isNotEmpty) {
+        final result = await DatabaseService(uid: widget.uid).updateUserData(
+          _fullNameEditingController.text.trim(),
+          _locationController.text.trim(),
+          newURL,
+        );
+
+        if (result != null) {
+          Navigator.of(context).pop();
+        } else {
+          setState(() {
+            _error = 'Error Updating';
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Error Updating: $e';
+        _isLoading = false;
+      });
     }
   }
 
-  _getUserDetails () async{
-    await DatabaseService(uid: widget.uid).getUserData(widget.userEmail).then((res) {
+  Future<void> _getUserDetails() async {
+    try {
+      final res = await DatabaseService(uid: widget.uid).getUserData(widget.userEmail);
+
+      if (res != null && res.docs.isNotEmpty) {
+        setState(() {
+          userSnap = res;
+          _fullNameEditingController.text = res.docs[0].data()['fullName']?.toString() ?? '';
+          _locationController.text = res.docs[0].data()['location']?.toString() ?? '';
+          profileImage = res.docs[0].data()['profileImage']?.toString() ?? newURL;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        userSnap = res;
-        //newURL = userSnap.documents[0].data['profileImage'].toString();
-        _fullNameEditingController.text = userSnap.docs[0].data['fullName'].toString();
-        _location.text = userSnap.docs[0].data['location'].toString();
-        profileImage = userSnap.docs[0].data['profileImage'].toString();
+        _error = 'Error fetching user details: $e';
         _isLoading = false;
       });
-    } );
+    }
   }
 
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery,imageQuality: 50);
-    setState(() {
+  Future<void> _getImage() async {
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+
       if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        print('----------------Image Selected-------------------');
-      } else {
-        print('----------------------No image selected.--------------------------------');
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+
+        await _uploadPic();
       }
-    });
+    } catch (e) {
+      setState(() {
+        _error = 'Error selecting image: $e';
+      });
+      print('Error selecting image: $e');
+    }
   }
 
-  Future uploadPic() async{
-    print('------------------upload function called===============');
-    Reference storageReference = FirebaseStorage.instance.ref().child('profiles/${Path.basename(_image.toString())}');
-    UploadTask uploadTask = storageReference.putFile(_image);
-    await uploadTask.onComplete;
-    print('---------------File Uploaded-------------------------------');
+  Future<void> _uploadPic() async {
+    if (_image == null) return;
 
-    storageReference.getDownloadURL().then((fileURL) {
+    try {
+      final fileName = Path.basename(_image!.path);
+      final storageReference = FirebaseStorage.instance.ref().child('profiles/$fileName');
+      final uploadTask = storageReference.putFile(_image!);
+
+      final snapshot = await uploadTask;
+      final downloadURL = await snapshot.ref.getDownloadURL();
+
       setState(() {
-        newURL = fileURL.toString();
-        print(newURL);
+        newURL = downloadURL;
+        profileImage = downloadURL;
+        print('Image uploaded successfully: $newURL');
       });
-    });
+    } catch (error) {
+      setState(() {
+        _error = 'Error uploading image: $error';
+        _isLoading = false;
+      });
+      print('Error uploading image: $error');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    return _isLoading?Loading():Scaffold(
+
+    return _isLoading
+        ? const Loading()
+        : Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
           'Edit profile',
-          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
+          style: TextStyle(fontFamily: 'OpenSans', color: Colors.white),
         ),
-        //elevation: 1,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            //color: Colors.blueAccent,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 16, top: 25, right: 16),
+        padding: const EdgeInsets.only(left: 16, top: 25, right: 16),
         child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
+          onTap: () => FocusScope.of(context).unfocus(),
           child: ListView(
             children: [
               Center(
@@ -131,129 +170,137 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       width: 130,
                       height: 130,
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.white,
-                                offset: Offset(0, 10))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(profileImage,)
+                        border: Border.all(
+                            width: 4,
+                            color: Theme.of(context).scaffoldBackgroundColor
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              color: Colors.white,
+                              offset: Offset(0, 10)
+                          )
+                        ],
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            profileImage ?? newURL,
                           ),
+                        ),
                       ),
                     ),
                     Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            color: Colors.blueAccent,
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            width: 4,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                           ),
-                          child: GestureDetector(
-                            onTap: (){
-                              getImage().then((value) => uploadPic());
-                              print('edit button-------------------------------------');
-                            },
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                            ),
+                          color: Colors.blueAccent,
+                        ),
+                        child: GestureDetector(
+                          onTap: _getImage,
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 35,
-              ),
+              const SizedBox(height: 35),
               Padding(
                 padding: const EdgeInsets.only(bottom: 35.0),
                 child: TextFormField(
                   controller: _fullNameEditingController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 3),
+                    contentPadding: const EdgeInsets.only(bottom: 3),
                     labelText: 'Full Name',
-                    labelStyle: TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: userSnap.docs[0].data['fullName'].toString(),
-                    hintStyle: TextStyle(
+                    hintText: userSnap?.docs[0].data()['fullName']?.toString() ?? '',
+                    hintStyle: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),
                   ),
-                    validator: (val) => val.isEmpty
-                        ? 'This field cannot be blank'
-                        : null
+                  validator: (val) => val?.isEmpty == true
+                      ? 'This field cannot be blank'
+                      : null,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 35.0),
                 child: TextFormField(
-                  controller: _location,
+                  controller: _locationController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 3),
+                    contentPadding: const EdgeInsets.only(bottom: 3),
                     labelText: 'Location',
-                    labelStyle: TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: (userSnap.docs[0].data['location'] != null)?userSnap.docs[0].data['location'].toString():'',
-                    hintStyle: TextStyle(
+                    hintText: userSnap?.docs[0].data()['location']?.toString() ?? '',
+                    hintStyle: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),
                   ),
-                    validator: (val) => val.isEmpty
-                        ? 'This field cannot be blank'
-                        : null
+                  validator: (val) => val?.isEmpty == true
+                      ? 'This field cannot be blank'
+                      : null,
                 ),
               ),
-              SizedBox(
-                height: 35,
-              ),
+              const SizedBox(height: 35),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded( 
+                  Expanded(
                     child: Container(
                       height: height * 0.070,
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(80.0)),
-                        padding: EdgeInsets.all(0.0),
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(80.0)
+                          ),
+                          padding: const EdgeInsets.all(0.0),
+                        ),
                         child: Ink(
                           decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Color(0xff374ABE), Color(0xff64B6FF)],
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xff374ABE),
+                                  Color(0xff64B6FF)
+                                ],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ),
-                              borderRadius: BorderRadius.circular(30.0)),
+                              borderRadius: BorderRadius.circular(30.0)
+                          ),
                           child: Container(
-                            constraints:
-                            BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
+                            constraints: const BoxConstraints(
+                                maxWidth: 250.0,
+                                minHeight: 50.0
+                            ),
                             alignment: Alignment.center,
-                            child: Text(
+                            child: const Text(
                               "Cancel",
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white, fontSize: 15),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15
+                              ),
                             ),
                           ),
                         ),
@@ -263,30 +310,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Expanded(
                     child: Container(
                       height: height * 0.070,
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       child: ElevatedButton(
-                        onPressed: () {
-                          _updateDetails();
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(80.0)),
-                        padding: EdgeInsets.all(0.0),
+                        onPressed: _updateDetails,
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(80.0)
+                          ),
+                          padding: const EdgeInsets.all(0.0),
+                        ),
                         child: Ink(
                           decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Color(0xff374ABE), Color(0xff64B6FF)],
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xff374ABE),
+                                  Color(0xff64B6FF)
+                                ],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ),
-                              borderRadius: BorderRadius.circular(30.0)),
+                              borderRadius: BorderRadius.circular(30.0)
+                          ),
                           child: Container(
-                            constraints:
-                            BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
+                            constraints: const BoxConstraints(
+                                maxWidth: 250.0,
+                                minHeight: 50.0
+                            ),
                             alignment: Alignment.center,
-                            child: Text(
+                            child: const Text(
                               "Save",
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white, fontSize: 15),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15
+                              ),
                             ),
                           ),
                         ),
@@ -295,12 +352,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 35,
-              ),
+              const SizedBox(height: 35),
               Text(
                 _error,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.red,
                   fontSize: 14.0,
                   fontFamily: 'OpenSans',

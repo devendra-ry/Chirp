@@ -1,71 +1,96 @@
 import 'package:blogging_app/helper_functions/helper_functions.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart'; // Import foundation for kDebugMode
 
 class AuthService {
-  //get the instance of database
+  // Get the instance of database
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // create user object based on FirebaseUser
-  User? _userFromFirebaseUser(User user) {
-    return (user != null) ? User(uid: user.uid) : null;
-  }
+  // Create user object based on FirebaseUser (Corrected)
+  // This method was redundant and incorrect. We can directly use User.
+  // The User object from Firebase already has the properties we need.
 
+  // Sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      // sign in with email and password
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      User user = result.user;
-      if (user.isEmailVerified) return _userFromFirebaseUser(user);
+      // Sign in with email and password
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      User? user = result.user; // User can be null
+
+      if (user != null && user.emailVerified) {
+        return user; // Return the User object directly
+      } else if (user != null && !user.emailVerified) {
+        // Handle unverified email
+        if (kDebugMode) {
+          print("Email not verified");
+        }
+        return "not verified"; // Indicate email not verified
+      }
+
       return null;
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }
 
+  // Register with email and password
   Future registerWithEmailAndPassword(
       String fullName, String email, String password) async {
     try {
-      // register with email and password
+      // Register with email and password
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      User user = result.user;
-      await user.sendEmailVerification();
-      // Create a new document for the user with uid in users collection
-      await DatabaseService(uid: user.uid)
-          .createUserData(fullName, email, password);
-      return _userFromFirebaseUser(user);
+      User? user = result.user; // User can be null
+      if (user != null) {
+        await user.sendEmailVerification();
+        // Create a new document for the user with uid in users collection
+        await DatabaseService(uid: user.uid)
+            .createUserData(fullName, email, password);
+        return user; // Return the User object directly
+      }
+      return null;
+
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }
 
-  //sign out
+  // Sign out
   Future signOut() async {
     try {
-      //remove all locally saved data
+      // Remove all locally saved data
       await Helper.saveUserLoggedInSharedPreference(false);
       await Helper.saveUserEmailSharedPreference('');
       await Helper.saveUserNameSharedPreference('');
 
-      //sign out the user
-      return await _auth.signOut().whenComplete(() async {});
+      // Sign out the user
+      await _auth.signOut();
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }
 
-  //reset password
+  // Reset password
   Future resetPassword(String email) async {
     try {
-      final auth = FirebaseAuth.instance;
-      auth.sendPasswordResetEmail(email: email);
+      await _auth.sendPasswordResetEmail(email: email);
+      return true; // Indicate success
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }

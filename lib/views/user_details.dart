@@ -9,257 +9,225 @@ class UserDetailsPage extends StatefulWidget {
   final String? fullName;
   final String? email;
 
-  UserDetailsPage({this.userId, this.fullName, this.email, this.cuid});
+  const UserDetailsPage({
+    Key? key,
+    this.userId,
+    this.fullName,
+    this.email,
+    this.cuid
+  }) : super(key: key);
 
   @override
   _UserDetailsPageState createState() => _UserDetailsPageState();
 }
 
 class _UserDetailsPageState extends State<UserDetailsPage> {
-
   QuerySnapshot? userSnap;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _getUserDetails();
-    print(widget.cuid);
-    print(widget.userId);
   }
 
-  _getUserDetails () async{
-    await DatabaseService(uid: widget.userId).getUserData(widget.email).then((res) {
+  _getUserDetails() async {
+    try {
+      if (widget.userId != null && widget.email != null) {
+        final res = await DatabaseService(uid: widget.userId).getUserData(widget.email);
+        setState(() {
+          userSnap = res;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        userSnap = res;
-        //_isLoading = false;
+        _isLoading = false;
       });
-    });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching user details: $e')),
+      );
+    }
   }
 
   _follow() async {
-    await DatabaseService(uid: widget.cuid).follow(widget.cuid, widget.userId).then((value) => {
-    });
+    try {
+      if (widget.cuid != null && widget.userId != null) {
+        await DatabaseService(uid: widget.cuid).follow(widget.cuid!, widget.userId!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Followed successfully')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error following user: $e')),
+      );
+    }
   }
 
-  _unfollow() async{
-    await DatabaseService(uid: widget.cuid).unfollow(widget.cuid, widget.userId).then((value) => {
-    });
+  _unfollow() async {
+    try {
+      if (widget.cuid != null && widget.userId != null) {
+        await DatabaseService(uid: widget.cuid).unfollow(widget.cuid!, widget.userId!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Unfollowed successfully')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error unfollowing user: $e')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    Randomizer randomizer = Randomizer.instance();
+    final Randomizer randomizer = Randomizer.instance();
+
+    // Null check for fullName
+    final displayName = widget.fullName ?? 'Unknown';
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(widget.fullName,style: TextStyle(
-          color: Colors.white
-        ),),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(
+          displayName,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
-      body: Container(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.only(top: 10.0),
+        padding: const EdgeInsets.only(top: 10.0),
         child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(30),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 50.0,
-                      backgroundColor: randomizer.randomColor(),
-                      child: Text(widget.fullName.substring(0, 1).toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 25.0)),
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(30),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 50.0,
+                    backgroundColor: randomizer.randomColor(),
+                    child: Text(
+                      displayName.substring(0, 1).toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 25.0),
                     ),
-                    SizedBox(height: 25.0),
-                    Text(widget.fullName),
-                    //SizedBox(height: 5.0),
-                    Text(widget.email),
-                    SizedBox(height: 20.0),
-                    Center(
-                      child: Container(
-                        height: height * 0.070,
-                        margin: EdgeInsets.all(5),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _follow();
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(80.0)),
-                          padding: EdgeInsets.all(0.0),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Color(0xff374ABE), Color(0xff64B6FF)],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ),
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Container(
-                              constraints:
-                              BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Follow",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white, fontSize: 15),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Container(
-                        height: height * 0.070,
-                        margin: EdgeInsets.all(5),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _unfollow();
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(80.0)),
-                          padding: EdgeInsets.all(0.0),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Color(0xff374ABE), Color(0xff64B6FF)],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ),
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Container(
-                              constraints:
-                              BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Unfollow",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white, fontSize: 15),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 25.0),
+                  Text(displayName),
+                  Text(widget.email ?? 'No email'),
+                  const SizedBox(height: 20.0),
+                  _buildFollowButton(height, "Follow", _follow),
+                  _buildFollowButton(height, "Unfollow", _unfollow),
+                ],
               ),
-              //SizedBox(height: 20.0),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: double.infinity,
-                    //margin: EdgeInsets.only(top: 2),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(34),bottom: Radius.circular(34))
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: const Radius.circular(34),
+                      bottom: const Radius.circular(34),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text("Total posts",style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text('${userSnap.documents[0].data['posts'].length}',style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text("Total likes",style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text('${userSnap.documents[0].data['totalLikes'].length}',style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text("Total dislikes",style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text('${userSnap.documents[0].data['totalDisLikes'].length}',style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text("Total followers",style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text('${userSnap.documents[0].data['followers'].length}',style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: userSnap != null && userSnap!.documents.isNotEmpty
+                        ? Column(
+                      children: [
+                        _buildStatRow("Total posts",
+                            userSnap!.documents[0].data['posts']?.length ?? 0),
+                        _buildStatRow("Total likes",
+                            userSnap!.documents[0].data['totalLikes']?.length ?? 0),
+                        _buildStatRow("Total dislikes",
+                            userSnap!.documents[0].data['totalDisLikes']?.length ?? 0),
+                        _buildStatRow("Total followers",
+                            userSnap!.documents[0].data['followers']?.length ?? 0),
+                      ],
+                    )
+                        : const Center(child: Text('No user statistics available')),
                   ),
                 ),
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFollowButton(double height, String text, VoidCallback onPressed) {
+    return Center(
+      child: Container(
+        height: height * 0.070,
+        margin: const EdgeInsets.all(5),
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(80.0),
+            ),
+            padding: EdgeInsets.zero,
+          ),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xff374ABE), Color(0xff64B6FF)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
+              alignment: Alignment.center,
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white, fontSize: 15),
+              ),
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatRow(String label, int value) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Center(
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 30.0),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Text(
+                '$value',
+                style: const TextStyle(fontSize: 30.0),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

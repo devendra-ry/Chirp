@@ -14,126 +14,136 @@ import 'authenticate_page.dart';
 import 'create_blog.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  // Get the info about logged in user
+  final AuthService _authService = AuthService();
 
-  //get the info about logged in user
-  final AuthService _authService = new AuthService();
-
-  //variables
+  // Variables
   User? _user;
   QuerySnapshot? userSnap;
   String _userName = '';
   String _userEmail = '';
-  Stream? _blogPosts;
+  Stream<QuerySnapshot>? _blogPosts; // Ensure the stream is of type QuerySnapshot
   String profilePic = '';
-  String defaultPic =
+  final String defaultPic =
       'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
 
   // initState
   @override
   void initState() {
     super.initState();
-    _getBlogPosts();
+    _loadUserData();
   }
 
-  _getBlogPosts() async {
-    //get the current user
-    _user = await FirebaseAuth.instance.currentUser!;
-    //get the name of the user stored l!ocally
-    await Helper.getUserNameSharedPreference().then((value) {
+  Future<void> _loadUserData() async {
+    // Get the current user
+    _user = FirebaseAuth.instance.currentUser;
+
+    if (_user != null) {
+      // Get the name and email of the user stored locally
+      _userName = await Helper.getUserNameSharedPreference() ?? '';
+      _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
+
+      // Get user data
+      userSnap = await DatabaseService(uid: _user!.uid).getUserDataID(_user!.uid);
+      profilePic =
+          (userSnap!.docs[0].data() as Map<String, dynamic>)['profileImage'] ??
+              defaultPic;
+
+      // Get the blogs of the user using a stream
       setState(() {
-        _userName = value!;
+        _blogPosts = DatabaseService(uid: _user!.uid).getUserBlogPosts();
       });
-    });
-    //get the email of the user stored locally
-    await Helper.getUserEmailSharedPreference().then((value) {
-      setState(() {
-        _userEmail = value!;
-      });
-    });
-    //get the blogs of the user
-    DatabaseService(uid: _user.uid).getUserBlogPosts().then((snapshots) {
-      setState(() {
-        _blogPosts = snapshots;
-      });
-    });
-    //get user data
-    await DatabaseService(uid: _user.uid).getUserDataID(_user.uid).then((res) {
-      setState(() {
-        userSnap = res;
-        profilePic = userSnap.docs[0].data['profileImage'].toString();
-      });
-    });
+    } else {
+      // Handle the case where the user is not logged in
+      print("User is not logged in.");
+    }
   }
 
   Widget noBlogPostWidget() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateBlogPage(
-                      uid: _user.uid,
+              if (_user != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateBlogPage(
+                      uid: _user!.uid,
                       userName: _userName,
-                      userEmail: _userEmail),
-                ),
-              ).then((value) => setState(() {
-                    _getBlogPosts();
-                  }));
+                      userEmail: _userEmail,
+                    ),
+                  ),
+                ).then((value) {
+                  // Refresh the blog posts after returning from CreateBlogPage
+                  _loadUserData();
+                });
+              } else {
+                // Handle the case where the user is not logged in
+                print("User is not logged in.");
+              }
             },
             child: Icon(Icons.add_circle, color: Colors.grey[700], size: 100.0),
           ),
-          SizedBox(height: 20.0),
-          Text(
-              "You have not created any blog posts, tap on the 'plus' icon present above or at the bottom-right to create your first blog post."),
+          const SizedBox(height: 20.0),
+          const Text(
+            "You have not created any blog posts, tap on the 'plus' icon present above or at the bottom-right to create your first blog post.",
+          ),
         ],
       ),
     );
   }
 
   Widget blogPostsList() {
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot>( // Specify the type for StreamBuilder
       stream: _blogPosts,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data.docs != null &&
-              snapshot.data.docs.length != 0) {
+          final docs = snapshot.data!.docs; // Access docs safely
+          if (docs.isNotEmpty) {
             return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      PostTile(
-                          userId: _user.uid,
-                          blogPostId:
-                              snapshot.data.docs[index].data['blogPostId'],
-                          blogPostTitle: snapshot
-                              .data.docs[index].data['blogPostTitle'],
-                          blogPostContent: snapshot
-                              .data.docs[index].data['blogPostContent'],
-                          date: snapshot.data.docs[index].data['date'],
-                          postImage: (snapshot.data.docs[index].data['postImage'] != null)? snapshot.data.docs[index].data['postImage']:'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png'),
-                      Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Divider(height: 0.0)),
-                    ],
-                  );
-                });
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> data =
+                docs[index].data() as Map<String, dynamic>;
+                return Column(
+                  children: <Widget>[
+                    PostTile(
+                      userId: _user!.uid,
+                      blogPostId: data['blogPostId'],
+                      blogPostTitle: data['blogPostTitle'],
+                      blogPostContent: data['blogPostContent'],
+                      date: data['date'],
+                      postImage: data['postImage'] ??
+                          'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png',
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Divider(height: 0.0),
+                    ),
+                  ],
+                );
+              },
+            );
           } else {
             return noBlogPostWidget();
           }
+        } else if (snapshot.hasError) {
+          // Handle error state
+          return Text('Error: ${snapshot.error}');
         } else {
-          return noBlogPostWidget();
+          return noBlogPostWidget(); // Or a loading indicator
         }
       },
     );
@@ -146,175 +156,200 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Home',
-          style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
+          style: TextStyle(fontFamily: 'OpenSans', color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: Drawer(
-        child: Container(
-          child: ListView(
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-                accountName: Text(
-                  _userName,
-                  style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
-                ),
-                accountEmail: Text(
-                  _userEmail,
-                  style: TextStyle(fontFamily: 'OpenSans',color: Colors.white),
-                ),
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      (profilePic == '') ? defaultPic : profilePic),
-                ),
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(
+                color: Color.fromRGBO(154, 183, 211, 1.0),
               ),
-              ListTile(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.home, color: Colors.blueGrey),
-                title: Text(
-                  'Home',
-                  style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
-                ),
+              accountName: Text(
+                _userName,
+                style:
+                const TextStyle(fontFamily: 'OpenSans', color: Colors.white),
               ),
-              ListTile(
-                onTap: () {
+              accountEmail: Text(
+                _userEmail,
+                style:
+                const TextStyle(fontFamily: 'OpenSans', color: Colors.white),
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(profilePic),
+              ),
+            ),
+            ListTile(
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(Icons.home, color: Colors.blueGrey),
+              title: const Text(
+                'Home',
+                style:
+                TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                if (_user != null) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProfilePage(
-                        uid: _user.uid,
+                        uid: _user!.uid,
                         userEmail: _userEmail,
                       ),
                     ),
                   );
-                },
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.person, color: Colors.blueGrey),
-                title: Text(
-                  'Profile',
-                  style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
-                ),
+                } else {
+                  // Handle the case where the user is not logged in
+                  print("User is not logged in.");
+                }
+              },
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(Icons.person, color: Colors.blueGrey),
+              title: const Text(
+                'Profile',
+                style:
+                TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
               ),
-              ListTile(
-                onTap: () {
+            ),
+            ListTile(
+              onTap: () {
+                if (_user != null) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SearchPage(cuid: _user.uid,),
-                    ),
-                  );
-                },
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.search, color: Colors.blueGrey),
-                title: Text(
-                  'Search',
-                  style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManageBlogs(),
-                    ),
-                  );
-                },
-                contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.edit, color: Colors.blueGrey),
-                title: Text(
-                  'Manage Blogs',
-                  style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TopBlogs(),
-                    ),
-                  );
-                },
-                contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.arrow_drop_up, color: Colors.blueGrey),
-                title: Text(
-                  'Top Blogs',
-                  style:
-                  TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
-                ),
-              ),
-              Divider(),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AboutPage(),
-                    ),
-                  );
-                },
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(Icons.info, color: Colors.blueGrey),
-                title: Text(
-                  'About',
-                  style:
-                      TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
-                ),
-              ),
-              ListTile(
-                onTap: () async {
-                  await _authService.signOut();
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => Authenticate(),
+                      builder: (context) => SearchPage(
+                        cuid: _user!.uid,
                       ),
-                      (Route<dynamic> route) => false);
-                },
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                leading: Icon(
-                  Icons.exit_to_app,
-                  color: Colors.red,
-                ),
-                title: Text(
-                  'Sign Out',
-                  style: TextStyle(color: Colors.red[300], fontSize: 16.0),
-                ),
+                    ),
+                  );
+                } else {
+                  // Handle the case where the user is not logged in
+                  print("User is not logged in.");
+                }
+              },
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(Icons.search, color: Colors.blueGrey),
+              title: const Text(
+                'Search',
+                style:
+                TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
               ),
-            ],
-          ),
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ManageBlogs(),
+                  ),
+                );
+              },
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(Icons.edit, color: Colors.blueGrey),
+              title: const Text(
+                'Manage Blogs',
+                style:
+                TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TopBlogs(),
+                  ),
+                );
+              },
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(Icons.arrow_drop_up, color: Colors.blueGrey),
+              title: const Text(
+                'Top Blogs',
+                style:
+                TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutPage(),
+                  ),
+                );
+              },
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(Icons.info, color: Colors.blueGrey),
+              title: const Text(
+                'About',
+                style:
+                TextStyle(fontFamily: 'OpenSans', color: Colors.blueGrey),
+              ),
+            ),
+            ListTile(
+              onTap: () async {
+                await _authService.signOut();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const Authenticate(),
+                  ),
+                      (Route<dynamic> route) => false,
+                );
+              },
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+              leading: const Icon(
+                Icons.exit_to_app,
+                color: Colors.red,
+              ),
+              title: const Text(
+                'Sign Out',
+                style: TextStyle(color: Colors.red, fontSize: 16.0),
+              ),
+            ),
+          ],
         ),
       ),
       body: blogPostsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreateBlogPage(
-                  uid: _user.uid, userName: _userName, userEmail: _userEmail),
-            ),
-          ).then((value) => setState(() {
-                _getBlogPosts();
-              }));
+          if (_user != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CreateBlogPage(
+                  uid: _user!.uid,
+                  userName: _userName,
+                  userEmail: _userEmail,
+                ),
+              ),
+            ).then((value) {
+              // Refresh the blog posts after returning from CreateBlogPage
+              _loadUserData();
+            });
+          } else {
+            // Handle the case where the user is not logged in
+            print("User is not logged in.");
+          }
         },
-        child: Icon(Icons.create, color: Colors.white, size: 30.0),
-        backgroundColor: Color.fromRGBO(154, 183, 211, 1.0),
+        backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
         elevation: 10,
+        child: const Icon(Icons.create, color: Colors.white, size: 30.0),
       ),
     );
   }
