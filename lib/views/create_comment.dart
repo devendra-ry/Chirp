@@ -95,11 +95,11 @@ class _CreateCommentState extends State<CreateComment> {
                           // Check if form is valid
                           await DatabaseService(uid: widget.userId)
                               .saveComment(
-                              widget.userId,
-                              widget.userName,
-                              widget.blogPostId,
-                              _commentEditingController.text)
-                              .then((value) => Navigator.of(context).pop());
+                              uid: widget.userId!,
+                              name: widget.userName!,
+                              blogId: widget.blogPostId!,
+                              comment: _commentEditingController.text);
+                          Navigator.of(context).pop();
                         }
                       },
                     ),

@@ -1,6 +1,4 @@
 import 'package:blogging_app/custom_widgets/delete_post_list.dart';
-import 'package:blogging_app/helper_functions/helper_functions.dart';
-import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,13 +11,9 @@ class DeleteBlogs extends StatefulWidget {
 
 class _DeleteBlogsState extends State<DeleteBlogs> {
   //get the info about logged in user
-  final AuthService _authService = AuthService(); // No need for `new`
-
   //variables
   User? _user; // Made nullable
   QuerySnapshot? userSnap; // Made nullable
-  String? _userName; // Made nullable
-  String? _userEmail; // Made nullable
   Stream? _blogPosts;
   String profilePic = '';
   String defaultPic =
@@ -38,25 +32,8 @@ class _DeleteBlogsState extends State<DeleteBlogs> {
     if (_user != null) {
       // Check if user is not null
       //get the name of the user stored locally
-      await Helper.getUserNameSharedPreference().then((value) {
-        setState(() {
-          _userName = value;
-        });
-      });
-      //get the email of the user stored locally
-      await Helper.getUserEmailSharedPreference().then((value) {
-        setState(() {
-          _userEmail = value;
-        });
-      });
       //get the blogs of the user
-      DatabaseService(uid: _user!.uid)
-          .getUserBlogPosts()
-          .then((snapshots) { // Use null-aware operator
-        setState(() {
-          _blogPosts = snapshots;
-        });
-      });
+      _blogPosts = DatabaseService(uid: _user!.uid).getUserBlogPosts();
     } else {
       // Handle the case where the user is not logged in
       print("User is not logged in.");

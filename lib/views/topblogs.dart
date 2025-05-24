@@ -1,6 +1,4 @@
 import 'package:blogging_app/custom_widgets/post.dart';
-import 'package:blogging_app/helper_functions/helper_functions.dart';
-import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,13 +13,9 @@ class TopBlogs extends StatefulWidget {
 
 class _TopBlogsState extends State<TopBlogs> {
   // Get the info about logged in user
-  final AuthService _authService = AuthService();
-
   // Variables
   User? _user;
   QuerySnapshot? userSnap;
-  String _userName = '';
-  String _userEmail = '';
   Stream? _blogPosts;
   String profilePic = '';
   final String defaultPic =
@@ -39,17 +33,11 @@ class _TopBlogsState extends State<TopBlogs> {
     _user = FirebaseAuth.instance.currentUser;
 
     if (_user != null) {
-      // Get the name of the user stored locally
-      _userName = await Helper.getUserNameSharedPreference() ?? '';
-
-      // Get the email of the user stored locally
-      _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
-
       // Get the top blog posts
       _blogPosts = DatabaseService().getTopBlogPosts();
 
       // Get user data
-      userSnap = await DatabaseService(uid: _user!.uid).getUserDataID(_user!.uid);
+      userSnap = await DatabaseService(uid: _user!.uid).getUserDataById(_user!.uid);
       profilePic =
           (userSnap!.docs[0].data() as Map<String, dynamic>)['profileImage'] ??
               defaultPic;

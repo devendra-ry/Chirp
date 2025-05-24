@@ -34,7 +34,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
   _getUserDetails() async {
     try {
       if (widget.userId != null && widget.email != null) {
-        final res = await DatabaseService(uid: widget.userId).getUserData(widget.email);
+        final res = await DatabaseService(uid: widget.userId).getUserData(widget.email!);
         setState(() {
           userSnap = res;
           _isLoading = false;
@@ -143,17 +143,17 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: userSnap != null && userSnap!.documents.isNotEmpty
+                    child: userSnap != null && userSnap!.docs.isNotEmpty
                         ? Column(
                       children: [
                         _buildStatRow("Total posts",
-                            userSnap!.documents[0].data['posts']?.length ?? 0),
+                            (userSnap!.docs[0].data() as Map<String, dynamic>)['posts']?.length ?? 0),
                         _buildStatRow("Total likes",
-                            userSnap!.documents[0].data['totalLikes']?.length ?? 0),
+                            (userSnap!.docs[0].data() as Map<String, dynamic>)['totalLikes']?.length ?? 0),
                         _buildStatRow("Total dislikes",
-                            userSnap!.documents[0].data['totalDisLikes']?.length ?? 0),
+                            (userSnap!.docs[0].data() as Map<String, dynamic>)['totalDisLikes']?.length ?? 0),
                         _buildStatRow("Total followers",
-                            userSnap!.documents[0].data['followers']?.length ?? 0),
+                            (userSnap!.docs[0].data() as Map<String, dynamic>)['followers']?.length ?? 0),
                       ],
                     )
                         : const Center(child: Text('No user statistics available')),

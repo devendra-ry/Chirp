@@ -16,7 +16,7 @@ class _ResetScreenState extends State<ResetScreen> {
   final _formKey = GlobalKey<FormState>();
 
   _onSend() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
@@ -100,7 +100,7 @@ class _ResetScreenState extends State<ResetScreen> {
                           validator: (val) {
                             return RegExp(
                                         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                    .hasMatch(val)
+                                    .hasMatch(val!)
                                 ? null
                                 : "Please enter a valid email";
                           },
@@ -110,10 +110,12 @@ class _ResetScreenState extends State<ResetScreen> {
                           width: double.infinity,
                           height: height * 0.072,
                           child: TextButton(
-                              elevation: 5.0,
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 5.0,
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
                               ),
                               child: Text(
                                 'Send email',

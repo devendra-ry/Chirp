@@ -1,6 +1,4 @@
 import 'package:blogging_app/custom_widgets/edit_post_list.dart';
-import 'package:blogging_app/helper_functions/helper_functions.dart';
-import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,13 +13,9 @@ class EditBlogs extends StatefulWidget {
 
 class _EditBlogsState extends State<EditBlogs> {
   // Get the info about logged in user
-  final AuthService _authService = AuthService();
-
   // Variables
   User? _user; // Made nullable
   QuerySnapshot? userSnap; // Made nullable
-  String? _userName; // Made nullable
-  String? _userEmail; // Made nullable
   Stream? _blogPosts; // Made nullable
   String profilePic = '';
   final String defaultPic =
@@ -39,11 +33,6 @@ class _EditBlogsState extends State<EditBlogs> {
     _user = FirebaseAuth.instance.currentUser;
 
     if (_user != null) {
-      // Get the name of the user stored locally
-      _userName = await Helper.getUserNameSharedPreference() ?? '';
-
-      // Get the email of the user stored locally
-      _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
 
       // Get the blogs of the user
       _blogPosts = DatabaseService(uid: _user!.uid).getUserBlogPosts();

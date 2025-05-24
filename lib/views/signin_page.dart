@@ -41,7 +41,7 @@ class _SignInPageState extends State<SignInPage> {
 
   //SignIn method
   _onSignIn() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
@@ -61,7 +61,7 @@ class _SignInPageState extends State<SignInPage> {
           await Helper.saveUserEmailSharedPreference(
               _emailEditingController.text);
           await Helper.saveUserNameSharedPreference(
-              userInfo.docs[0].data['fullName']);
+              (userInfo.docs[0].data() as Map<String, dynamic>)['fullName']);
           //Navigate to HomePage after login
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => HomePage()));
@@ -142,7 +142,7 @@ class _SignInPageState extends State<SignInPage> {
                           validator: (val) {
                             return RegExp(
                                         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                    .hasMatch(val)
+                                    .hasMatch(val!)
                                 ? null
                                 : "Please enter a valid email";
                           },
@@ -183,7 +183,7 @@ class _SignInPageState extends State<SignInPage> {
                               },
                             ),
                           ),
-                          validator: (val) => val.length < 6
+                          validator: (val) => val!.length < 6
                               ? 'Password not strong enough'
                               : null,
                           obscureText: !_passwordVisible,
@@ -206,11 +206,13 @@ class _SignInPageState extends State<SignInPage> {
                         SizedBox(
                           width: double.infinity,
                           height: height * 0.072,
-                          child: RaisedButton(
-                              elevation: 5.0,
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 5.0,
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
                               ),
                               child: Text(
                                 'Sign In',
@@ -245,7 +247,7 @@ class _SignInPageState extends State<SignInPage> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    widget.toggleView();
+                                    widget.toggleView!();
                                   },
                               ),
                             ],

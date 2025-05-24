@@ -26,7 +26,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _locationController = TextEditingController();
 
   File? _image;
-  final picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
 
   String newURL = 'https://firebasestorage.googleapis.com/v0/b/blogging-app-e918a.appspot.com/o/profiles%2Fblank-profile-picture-973460_960_720.png?alt=media&token=bfd3784e-bfd2-44b5-93cb-0c26e3090ba4';
   String? profileImage;
@@ -49,20 +49,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (_fullNameEditingController.text.trim().isNotEmpty ||
           _locationController.text.trim().isNotEmpty ||
           newURL.isNotEmpty) {
-        final result = await DatabaseService(uid: widget.uid).updateUserData(
+        await DatabaseService(uid: widget.uid).updateUserData(
           _fullNameEditingController.text.trim(),
           _locationController.text.trim(),
           newURL,
         );
-
-        if (result != null) {
-          Navigator.of(context).pop();
-        } else {
-          setState(() {
-            _error = 'Error Updating';
-            _isLoading = false;
-          });
-        }
+        Navigator.of(context).pop();
       }
     } catch (e) {
       setState(() {
@@ -74,14 +66,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _getUserDetails() async {
     try {
-      final res = await DatabaseService(uid: widget.uid).getUserData(widget.userEmail);
+      final res = await DatabaseService(uid: widget.uid).getUserData(widget.userEmail!);
 
-      if (res != null && res.docs.isNotEmpty) {
+      if (res.docs.isNotEmpty) {
         setState(() {
           userSnap = res;
-          _fullNameEditingController.text = res.docs[0].data()['fullName']?.toString() ?? '';
-          _locationController.text = res.docs[0].data()['location']?.toString() ?? '';
-          profileImage = res.docs[0].data()['profileImage']?.toString() ?? newURL;
+          _fullNameEditingController.text = (res.docs[0].data() as Map<String, dynamic>)['fullName']?.toString() ?? '';
+          _locationController.text = (res.docs[0].data() as Map<String, dynamic>)['location']?.toString() ?? '';
+          profileImage = (res.docs[0].data() as Map<String, dynamic>)['profileImage']?.toString() ?? newURL;
           _isLoading = false;
         });
       }
@@ -95,7 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _getImage() async {
     try {
-      final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
 
       if (pickedFile != null) {
         setState(() {
@@ -142,7 +134,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final height = MediaQuery.of(context).size.height;
 
     return _isLoading
-        ? const Loading()
+        ? Loading()
         : Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -227,7 +219,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     labelText: 'Full Name',
                     labelStyle: const TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: userSnap?.docs[0].data()['fullName']?.toString() ?? '',
+                    hintText: (userSnap?.docs[0].data() as Map<String, dynamic>)['fullName']?.toString() ?? '',
                     hintStyle: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -248,7 +240,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     labelText: 'Location',
                     labelStyle: const TextStyle(color: Colors.black),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: userSnap?.docs[0].data()['location']?.toString() ?? '',
+                    hintText: (userSnap?.docs[0].data() as Map<String, dynamic>)['location']?.toString() ?? '',
                     hintStyle: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

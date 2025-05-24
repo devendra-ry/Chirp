@@ -25,18 +25,6 @@ class PostTile extends StatefulWidget {
 }
 
 class _PostTileState extends State<PostTile> {
-  User? _user; // Made nullable
-
-  // initState
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentUser();
-  }
-
-  _getCurrentUser() async {
-    _user = FirebaseAuth.instance.currentUser; // Removed await
-  }
 
   @override
   Widget build(BuildContext context) {

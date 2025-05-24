@@ -55,7 +55,7 @@ class _EditPostState extends State<EditPost> {
   _getBlogPostDetails() async {
     try {
       blogPostDetails = await DatabaseService(uid: widget.userId)
-          .getBlogPostDetails(widget.blogPostId);
+          .getBlogPostDetails(widget.blogPostId!);
 
       if (blogPostDetails != null) {
         blogPostRef = FirebaseFirestore.instance
@@ -101,10 +101,10 @@ class _EditPostState extends State<EditPost> {
 
       try {
         await DatabaseService(uid: widget.userId).updateBlogPost(
-          widget.blogPostId,
-          _titleEditingController.text,
-          _contentEditingController.text,
-          newURL ?? '',
+          id: widget.blogPostId!,
+          title: _titleEditingController.text,
+          content: _contentEditingController.text,
+          url: newURL ?? '',
         );
 
         // Use pushAndRemoveUntil to prevent going back to the EditPost screen
@@ -162,7 +162,7 @@ class _EditPostState extends State<EditPost> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Loading()
+        ? Loading()
         : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),

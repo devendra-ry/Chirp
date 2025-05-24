@@ -25,7 +25,7 @@ class _SearchCategoryState extends State<SearchCategory> {
       try {
         final snapshot = await DatabaseService().searchBlogPostsByCategory(searchEditingController.text);
         setState(() {
-          searchResultSnapshot = snapshot;
+          searchResultSnapshot = snapshot as QuerySnapshot<Map<String, dynamic>>;
           _isLoading = false;
           _hasUserSearched = true;
         });

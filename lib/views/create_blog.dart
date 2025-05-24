@@ -48,33 +48,25 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
       try {
         String? blogPostId = await DatabaseService(uid: widget.uid).saveBlogPost(
-          _titleEditingController.text,
-          widget.userName,
-          widget.userEmail,
-          _contentEditingController.text,
-          newURL,
-          _categoryEditingController.text,
+          title: _titleEditingController.text,
+          author: widget.userName!,
+          authorEmail: widget.userEmail!,
+          content: _contentEditingController.text,
+          url: newURL,
+          category: _categoryEditingController.text,
         );
 
-        if (blogPostId != null) {
-          // Navigate to ArticlePage and remove all previous routes
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => ArticlePage(
-                userId: widget.uid,
-                blogPostId: blogPostId,
-                postImage: newURL,
-              ),
+        // Navigate to ArticlePage and remove all previous routes
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => ArticlePage(
+              userId: widget.uid,
+              blogPostId: blogPostId!,
+              postImage: newURL,
             ),
-                (route) => false, // Remove all previous routes
-          );
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-          print("Error saving blog post: blogPostId is null");
-          // Show an error message to the user
-        }
+          ),
+              (route) => false, // Remove all previous routes
+        );
       } catch (e) {
         setState(() {
           _isLoading = false;
@@ -122,7 +114,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Loading()
+        ? Loading()
         : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),

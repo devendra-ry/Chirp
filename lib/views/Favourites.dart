@@ -1,6 +1,4 @@
 import 'package:blogging_app/custom_widgets/post.dart';
-import 'package:blogging_app/helper_functions/helper_functions.dart';
-import 'package:blogging_app/services/authentication_service.dart';
 import 'package:blogging_app/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,13 +12,9 @@ class Favourites extends StatefulWidget {
 }
 
 class _FavouritesState extends State<Favourites> {
-  final AuthService _authService = AuthService();
-
   // Variables
   User? _user;
   QuerySnapshot? userSnap;
-  String _userName = '';
-  String _userEmail = '';
   Stream<QuerySnapshot>? _blogPosts;
   String profilePic = '';
   static const String defaultPic =
@@ -37,17 +31,11 @@ class _FavouritesState extends State<Favourites> {
     _user = FirebaseAuth.instance.currentUser;
     if (_user != null) {
       try {
-        // Get the name of the user stored locally
-        _userName = await Helper.getUserNameSharedPreference() ?? '';
-
-        // Get the email of the user stored locally
-        _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
-
         // Get the blogs of the user
-        _blogPosts = DatabaseService(uid: _user!.uid).getFavouriteBlogPosts();
+        _blogPosts = DatabaseService(uid: _user!.uid).getLikedBlogPosts();
 
         // Get user data
-        userSnap = await DatabaseService(uid: _user!.uid).getUserDataID(_user!.uid);
+        userSnap = await DatabaseService(uid: _user!.uid).getUserDataById(_user!.uid);
 
         profilePic = (userSnap!.docs[0].data() as Map<String, dynamic>)['profileImage'] as String? ?? defaultPic;
 

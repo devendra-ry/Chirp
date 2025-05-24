@@ -5,7 +5,7 @@ import 'package:blogging_app/views/comments.dart';
 import 'package:blogging_app/views/create_comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ArticlePage extends StatefulWidget {
   final String? userId;
@@ -28,10 +28,8 @@ class _ArticlePageState extends State<ArticlePage> {
   bool _isLoading = true;
   bool _isLiked = false;
   bool _isDisliked = false;
-  bool _isFavourite = false;
   DocumentReference? _blogPostRef;
   DocumentSnapshot? _blogPostSnap;
-  String? _userName;
 
   @override
   void initState() {
@@ -43,7 +41,7 @@ class _ArticlePageState extends State<ArticlePage> {
     try {
       // Fetch blog post details
       _blogPostDetails = await DatabaseService(uid: widget.userId)
-          .getBlogPostDetails(widget.blogPostId);
+          .getBlogPostDetails(widget.blogPostId!);
 
       if (_blogPostDetails != null) {
         _blogPostRef = FirebaseFirestore.instance
@@ -57,15 +55,13 @@ class _ArticlePageState extends State<ArticlePage> {
           if (data != null) {
             _isLiked = (data['likedBy'] as List<dynamic>? ?? []).contains(widget.userId);
             _isDisliked = (data['dislikedBy'] as List<dynamic>? ?? []).contains(widget.userId);
-            _isFavourite = data['favourite'] == true;
           }
         } else {
           debugPrint("Blog post document does not exist.");
         }
 
-        final userRes = await DatabaseService(uid: widget.userId).getUserData(widget.userId);
+        final userRes = await DatabaseService(uid: widget.userId).getUserData(widget.userId!);
         if (userRes.docs.isNotEmpty) {
-          _userName = (userRes.docs[0].data() as Map<String, dynamic>)['fullName']?.toString();
         } else {
           debugPrint("User data not found for user ID: ${widget.userId}");
         }
@@ -89,9 +85,9 @@ class _ArticlePageState extends State<ArticlePage> {
   }) async {
     try {
       if (isLiking) {
-        await DatabaseService(uid: widget.userId).togglingLikes(widget.blogPostId);
+        await DatabaseService(uid: widget.userId!).toggleLikes(widget.blogPostId!);
       } else {
-        await DatabaseService(uid: widget.userId).togglingDisLikes(widget.blogPostId);
+        await DatabaseService(uid: widget.userId!).toggleDislikes(widget.blogPostId!);
       }
 
       _blogPostSnap = await _blogPostRef?.get();
@@ -126,8 +122,8 @@ class _ArticlePageState extends State<ArticlePage> {
         context,
         MaterialPageRoute(
           builder: (_) => Comments(
-            postId: widget.blogPostId,
-            postAuthorId: widget.userId,
+            blogPostId: widget.blogPostId,
+            userId: widget.userId,
           ),
         ),
       ),
@@ -230,8 +226,8 @@ class _ArticlePageState extends State<ArticlePage> {
         context,
         MaterialPageRoute(
           builder: (_) => CreateComment(
-            postId: widget.blogPostId,
-            postAuthorId: widget.userId,
+            blogPostId: widget.blogPostId,
+            userId: widget.userId,
           ),
         ),
       ),
@@ -248,6 +244,7 @@ class _ArticlePageState extends State<ArticlePage> {
       subject: 'Check out this blog post!',
     ).catchError((e) {
       debugPrint('Error sharing post: $e');
+      return ShareResult('', ShareResultStatus.unavailable); // Return a ShareResult
     });
   }
 
@@ -256,7 +253,7 @@ class _ArticlePageState extends State<ArticlePage> {
     final height = MediaQuery.of(context).size.height;
 
     return _isLoading
-        ? const Loading()
+        ? Loading()
         : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),
