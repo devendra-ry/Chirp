@@ -25,7 +25,7 @@ class _SearchBlogPostsState extends State<SearchBlogPosts> {
         final snapshot = await DatabaseService()
             .searchBlogPostsByName(searchEditingController.text);
         setState(() {
-          searchResultSnapshot = snapshot;
+          searchResultSnapshot = snapshot as QuerySnapshot<Map<String, dynamic>>;
           _hasUserSearched = true;
         });
       } catch (e) {

@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
       _userEmail = await Helper.getUserEmailSharedPreference() ?? '';
 
       // Get user data
-      userSnap = await DatabaseService(uid: _user!.uid).getUserDataID(_user!.uid);
+      userSnap = await DatabaseService(uid: _user!.uid).getUserDataById(_user!.uid);
       profilePic =
           (userSnap!.docs[0].data() as Map<String, dynamic>)['profileImage'] ??
               defaultPic;
@@ -202,6 +202,7 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProfilePage(
+                        visitedUserId: _user!.uid,
                         uid: _user!.uid,
                         userEmail: _userEmail,
                       ),
@@ -251,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ManageBlogs(),
+                    builder: (context) => ManageBlogs(),
                   ),
                 );
               },
@@ -288,7 +289,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AboutPage(),
+                    builder: (context) => AboutPage(),
                   ),
                 );
               },
@@ -306,7 +307,7 @@ class _HomePageState extends State<HomePage> {
                 await _authService.signOut();
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (context) => const Authenticate(),
+                    builder: (context) => Authenticate(key: UniqueKey()),
                   ),
                       (Route<dynamic> route) => false,
                 );

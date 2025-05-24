@@ -36,9 +36,11 @@ class _ManageBlogsState extends State<ManageBlogs> {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => EditBlogs()));
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80.0)),
-                    padding: EdgeInsets.all(0.0),
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(80.0)),
+                      padding: EdgeInsets.all(0.0),
+                    ),
                     child: Ink(
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -70,9 +72,11 @@ class _ManageBlogsState extends State<ManageBlogs> {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => DeleteBlogs()));
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80.0)),
-                    padding: EdgeInsets.all(0.0),
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(80.0)),
+                      padding: EdgeInsets.all(0.0),
+                    ),
                     child: Ink(
                       decoration: BoxDecoration(
                           gradient: LinearGradient(

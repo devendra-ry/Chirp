@@ -43,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _onRegister() async {
     //check if the user entered correct info
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
@@ -134,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   hintStyle: TextStyle(color: Colors.white70),
                                   prefixIcon:
                                       Icon(Icons.person, color: Colors.white)),
-                              validator: (val) => val.isEmpty
+                              validator: (val) => val!.isEmpty
                                   ? 'This field cannot be blank'
                                   : null),
                           SizedBox(height: height * 0.02),
@@ -158,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: (val) {
                               return RegExp(
                                           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                      .hasMatch(val)
+                                      .hasMatch(val!)
                                   ? null
                                   : "Please enter a valid email";
                             },
@@ -197,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 },
                               ),
                             ),
-                            validator: (val) => val.length < 6
+                            validator: (val) => val!.length < 6
                                 ? 'Password not strong enough'
                                 : null,
                             obscureText: !_passwordVisible,
@@ -246,10 +246,12 @@ class _RegisterPageState extends State<RegisterPage> {
                             width: double.infinity,
                             height: height * 0.072,
                             child: TextButton(
-                                elevation: 0.0,
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0)),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0)),
+                                ),
                                 child: Text('Sign Up',
                                     style: TextStyle(
                                         color: Colors.blue, fontSize: 16.0)),
@@ -277,7 +279,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      widget.toggleView();
+                                      widget.toggleView!();
                                     },
                                 ),
                               ],

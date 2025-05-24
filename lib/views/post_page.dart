@@ -28,19 +28,16 @@ class _BlogPostPageState extends State<BlogPostPage> {
   }
 
   _getBlogPostDetails() async {
-    await DatabaseService(uid: widget.userId)
-        .getBlogPostDetails(widget.blogPostId)
-        .then((res) {
-      setState(() {
-        blogPostDetails = res;
-        _isLoading = false;
-      });
+    blogPostDetails = await DatabaseService(uid: widget.userId)
+        .getBlogPostDetails(widget.blogPostId!);
+    setState(() {
+      _isLoading = false;
     });
 
-    blogPostRef = FirebaseFirestore.instance.collection('blogPosts').document(widget.blogPostId);
+    blogPostRef = FirebaseFirestore.instance.collection('blogPosts').doc(widget.blogPostId!);
     blogPostSnap = await blogPostRef.get();
 
-    List<dynamic> likedBy = blogPostSnap.data['likedBy'];
+    List<dynamic> likedBy = (blogPostSnap.data() as Map<String, dynamic>)['likedBy'];
     if (likedBy.contains(widget.userId)) {
       setState(() {
         _isLiked = true;
@@ -51,7 +48,7 @@ class _BlogPostPageState extends State<BlogPostPage> {
       });
     }
 
-    print(blogPostSnap.data);
+    print(blogPostSnap.data());
   }
 
   @override
@@ -61,13 +58,13 @@ class _BlogPostPageState extends State<BlogPostPage> {
         : Scaffold(
             appBar: AppBar(
               elevation: 0.0,
-              title: Text(blogPostDetails.blogPostTitle),
+              title: Text(blogPostDetails.blogPostTitle!),
             ),
             body: Center(
                 child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
               children: <Widget>[
-                Text(blogPostDetails.blogPostTitle,
+                Text(blogPostDetails.blogPostTitle!,
                     style: TextStyle(
                         fontSize: 40.0,
                         color: Colors.black,
@@ -89,7 +86,7 @@ class _BlogPostPageState extends State<BlogPostPage> {
                     GestureDetector(
                       onTap: () async {
                         await DatabaseService(uid: widget.userId)
-                            .togglingLikes(widget.blogPostId);
+                            .toggleLikes(widget.blogPostId!);
                         blogPostSnap = await blogPostRef.get();
                         setState(() {
                           _isLiked = !_isLiked;
@@ -105,19 +102,15 @@ class _BlogPostPageState extends State<BlogPostPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            _isLiked != null
-                                ? (_isLiked
-                                    ? Icon(Icons.thumb_up,
-                                        size: 17.0, color: Colors.blueAccent)
-                                    : Icon(Icons.thumb_up, size: 17.0))
-                                : Text(''),
-                            // Icon(Icons.thumb_up, size: 17.0),
+                            _isLiked
+                                ? Icon(Icons.thumb_up,
+                                    size: 17.0, color: Colors.blueAccent)
+                                : Icon(Icons.thumb_up, size: 17.0),
                             SizedBox(width: 7.0),
-                            blogPostSnap != null
-                                ? Text(
-                                    '${blogPostSnap.data['likedBy'].length} Like(s)',
-                                    style: TextStyle(fontSize: 13.0))
-                                : Text(''),
+                            Text(
+                              '${(blogPostSnap.data() as Map<String, dynamic>)['likedBy'].length} Like(s)',
+                              style: TextStyle(fontSize: 13.0),
+                            ),
                           ],
                         ),
                       ),
@@ -125,7 +118,7 @@ class _BlogPostPageState extends State<BlogPostPage> {
                   ],
                 ),
                 SizedBox(height: 40.0),
-                Text(blogPostDetails.blogPostContent,
+                Text(blogPostDetails.blogPostContent!,
                     style: TextStyle(fontSize: 16.0)),
               ],
             )),

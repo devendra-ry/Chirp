@@ -24,9 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
   QuerySnapshot? userSnap;
   bool _isLoading = true;
 
-  int _followersCount = 0;
-  int _followingCount = 0;
-  bool _isFollowing = false;
 
   @override
   void initState() {
@@ -51,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Loading()
+        ? Loading()
         : Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(

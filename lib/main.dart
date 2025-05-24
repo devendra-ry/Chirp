@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
         primaryColor: const Color.fromRGBO(154, 183, 211, 1.0),
       ),
       // Use a ternary operator with a condition that handles null
-      home: _isLoggedIn ? const HomePage() : const Authenticate(),
+      home: _isLoggedIn ? HomePage() : Authenticate(key: UniqueKey()),
     );
   }
 }

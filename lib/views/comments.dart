@@ -25,13 +25,8 @@ class _CommentsState extends State<Comments> {
 
   _getComments() async {
     // No need for await here, just call the function
-    DatabaseService(uid: widget.userId)
-        .getComments(widget.blogPostId)
-        .then((snapshots) {
-      setState(() {
-        _comments = snapshots;
-      });
-    });
+    _comments = DatabaseService(uid: widget.userId)
+        .getComments(widget.blogPostId!);
   }
 
   Widget noComments() {
@@ -70,8 +65,9 @@ class _CommentsState extends State<Comments> {
                 return Column(
                   children: <Widget>[
                     CommentTile(
+                        key: ValueKey(data['comID']),
                         userName: data['userName'],
-                        blogPostId: data['comID'], // It's better if comID is also passed during creation
+                        blogPostId: data['comID'],
                         comment: data['comment'],
                         date: data['date']),
                     Container(
