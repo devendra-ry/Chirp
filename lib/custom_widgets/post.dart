@@ -44,7 +44,7 @@ class _PostTileState extends State<PostTile> {
           );
         } else {
           // Handle cases where required data is missing
-          print("Missing data for ArticlePage navigation");
+          // print("Missing data for ArticlePage navigation");
         }
       },
       child: Container(

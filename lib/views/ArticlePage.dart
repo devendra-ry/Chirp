@@ -57,19 +57,19 @@ class _ArticlePageState extends State<ArticlePage> {
             _isDisliked = (data['dislikedBy'] as List<dynamic>? ?? []).contains(widget.userId);
           }
         } else {
-          debugPrint("Blog post document does not exist.");
+          // debugPrint("Blog post document does not exist.");
         }
 
         final userRes = await DatabaseService(uid: widget.userId).getUserData(widget.userId!);
         if (userRes.docs.isNotEmpty) {
         } else {
-          debugPrint("User data not found for user ID: ${widget.userId}");
+          // debugPrint("User data not found for user ID: ${widget.userId}");
         }
       } else {
-        debugPrint("Blog post not found.");
+        // debugPrint("Blog post not found.");
       }
     } catch (e) {
-      debugPrint('Error getting blog post details: $e');
+      // debugPrint('Error getting blog post details: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -93,7 +93,7 @@ class _ArticlePageState extends State<ArticlePage> {
       _blogPostSnap = await _blogPostRef?.get();
       updateState();
     } catch (e) {
-      debugPrint('Error toggling interaction: $e');
+      // debugPrint('Error toggling interaction: $e');
     }
   }
 
@@ -131,7 +131,7 @@ class _ArticlePageState extends State<ArticlePage> {
         children: [
           const Icon(Icons.comment, color: Colors.grey),
           const SizedBox(width: 4.0),
-          Text('$commentCount'),
+          SizedBox.shrink(),
         ],
       ),
     );
@@ -243,7 +243,7 @@ class _ArticlePageState extends State<ArticlePage> {
       '$title\n\n$content',
       subject: 'Check out this blog post!',
     ).catchError((e) {
-      debugPrint('Error sharing post: $e');
+      // debugPrint('Error sharing post: $e');
       return sharing.ShareResult('', sharing.ShareResultStatus.unavailable); // Return a ShareResult
     });
   }

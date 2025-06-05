@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:randomizer_null_safe/randomizer_null_safe.dart';
 
 class CommentTile extends StatefulWidget {
   final String userName;
@@ -14,7 +13,17 @@ class CommentTile extends StatefulWidget {
 }
 
 class _CommentTileState extends State<CommentTile> {
-  Randomizer randomizer = Randomizer.instance();
+  Color getAvatarColor(String userName) {
+    if (userName.isEmpty) {
+      return Colors.grey; // Default color for empty username
+    }
+    final int hash = userName.codeUnits.fold(0, (prev, curr) => prev + curr);
+    final List<Color> predefinedColors = [
+      Colors.red, Colors.green, Colors.blue, Colors.orange, Colors.purple,
+      Colors.pink, Colors.teal, Colors.indigo, Colors.brown, Colors.cyan,
+    ];
+    return predefinedColors[hash % predefinedColors.length];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +42,7 @@ class _CommentTileState extends State<CommentTile> {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30.0,
-          backgroundColor: randomizer.randomColor(),
+          backgroundColor: getAvatarColor(widget.userName),
           child: Text(widget.userName.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
         ),
         title: Text(

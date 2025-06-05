@@ -124,7 +124,10 @@ class DatabaseService {
     });
 
     // Delete associated comments
-    await commentCollection.doc(id).delete();
+    QuerySnapshot commentsSnapshot = await commentCollection.where('comID', isEqualTo: id).get();
+    for (var doc in commentsSnapshot.docs) {
+      await doc.reference.delete();
+    }
 
     // Delete blog post
     await blogCollection.doc(id).delete();
@@ -316,7 +319,7 @@ class DatabaseService {
     required String blogId,
     required String comment
   }) async {
-    await commentCollection.doc(blogId).set({
+    await commentCollection.add({
       'userId': uid,
       'userName': name,
       'comID': blogId,
