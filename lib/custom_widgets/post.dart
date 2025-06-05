@@ -1,6 +1,5 @@
 import 'package:blogging_app/views/ArticlePage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class PostTile extends StatefulWidget {
   final String? userId; // Made nullable

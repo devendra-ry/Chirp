@@ -61,7 +61,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
           MaterialPageRoute(
             builder: (context) => ArticlePage(
               userId: widget.uid,
-              blogPostId: blogPostId!,
+              blogPostId: blogPostId,
               postImage: newURL,
             ),
           ),

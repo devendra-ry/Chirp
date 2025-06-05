@@ -5,7 +5,7 @@ import 'package:blogging_app/views/comments.dart';
 import 'package:blogging_app/views/create_comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:share_plus/share_plus.dart' as sharing;
 
 class ArticlePage extends StatefulWidget {
   final String? userId;
@@ -239,12 +239,12 @@ class _ArticlePageState extends State<ArticlePage> {
     final title = _blogPostDetails?.blogPostTitle ?? '';
     final content = _blogPostDetails?.blogPostContent ?? '';
 
-    Share.share(
+    sharing.Share.share(
       '$title\n\n$content',
       subject: 'Check out this blog post!',
     ).catchError((e) {
       debugPrint('Error sharing post: $e');
-      return ShareResult('', ShareResultStatus.unavailable); // Return a ShareResult
+      return sharing.ShareResult('', sharing.ShareResultStatus.unavailable); // Return a ShareResult
     });
   }
 
