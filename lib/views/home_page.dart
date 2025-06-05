@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       });
     } else {
       // Handle the case where the user is not logged in
-      print("User is not logged in.");
+      // print("User is not logged in.");
     }
   }
 
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 });
               } else {
                 // Handle the case where the user is not logged in
-                print("User is not logged in.");
+                // print("User is not logged in.");
               }
             },
             child: Icon(Icons.add_circle, color: Colors.grey[700], size: 100.0),
@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 } else {
                   // Handle the case where the user is not logged in
-                  print("User is not logged in.");
+                  // print("User is not logged in.");
                 }
               },
               contentPadding:
@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 } else {
                   // Handle the case where the user is not logged in
-                  print("User is not logged in.");
+                  // print("User is not logged in.");
                 }
               },
               contentPadding:
@@ -345,7 +345,7 @@ class _HomePageState extends State<HomePage> {
             });
           } else {
             // Handle the case where the user is not logged in
-            print("User is not logged in.");
+            // print("User is not logged in.");
           }
         },
         backgroundColor: const Color.fromRGBO(154, 183, 211, 1.0),

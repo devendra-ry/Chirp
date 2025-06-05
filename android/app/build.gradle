@@ -50,21 +50,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    
-    // Set default build config
-    defaultConfig {
-        applicationId "com.example.blogging_app"
-        minSdk 23
-        targetSdk 34
-        versionCode 1
-        versionName "1.0.0"
-        
-        // Enable multidex support
-        multiDexEnabled true
-        
-        // Enable vector drawable support
-        vectorDrawables.useSupportLibrary = true
-    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -72,10 +57,12 @@ android {
 
     defaultConfig {
         applicationId "com.example.blogging_app"
-        minSdkVersion 23
-        targetSdkVersion 34
+        minSdk 23
+        targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
